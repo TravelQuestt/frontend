@@ -3,18 +3,13 @@
 import ThreeGlobeBackground from "@/components/login/ThreeGlobeBackground";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
-import { useState } from "react";
-import { useLogin } from "@/hooks/useLogin";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { useLogin } from "@/hooks/auth/useLogin";
+import { LoginSchema } from "@/schemas/login";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff } from "lucide-react";
-
-const LoginSchema = z.object({
-    email: z.string().email("Invalid email"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
-});
+import Link from "next/link";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);

@@ -1,19 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { registerSchema } from "@/schemas/register";
-import { useRegister } from "@/hooks/auth/useRegister";
 import ThreeGlobeBackground from "@/components/login/ThreeGlobeBackground";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useRegister } from "@/hooks/auth/useRegister";
+import { registerSchema } from "@/schemas/register";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function RegisterPage() {
-    const router = useRouter();
-
     const register = useRegister();
 
     const [form, setForm] = useState({

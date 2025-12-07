@@ -59,7 +59,7 @@ export default function Dashboard() {
             latitude: 35.6762,
             longitude: 139.6503,
             imageUrls: [
-                "https://images.unsplash.com/photo-1526483360412-f4dbaf036963",
+                "https://images.unsplash.com/photo-1504384308090-c894fdcc538d",
             ],
             createdAt: "2025-02-10T14:20:00Z",
             likesCount: 98,

@@ -7,18 +7,14 @@ export function proxy(req: NextRequest) {
   const token = req.cookies.get("auth_token")?.value;
   const { pathname } = req.nextUrl;
 
-  // If user is on a public page → allow
   if (PUBLIC_ROUTES.includes(pathname)) {
     if (token) {
-      // Already logged in? redirect to dashboard
       return NextResponse.redirect(new URL("/dashboard", req.url));
     }
     return NextResponse.next();
   }
 
-  // All other routes treated as protected
   if (!token) {
-    // Redirect BEFORE hitting the route
     const loginUrl = new URL("/login", req.url);
     loginUrl.searchParams.set("redirect", pathname); 
     return NextResponse.redirect(loginUrl);

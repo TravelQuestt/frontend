@@ -1,6 +1,5 @@
-"use client";
-
-import { registerUser } from "@/lib/api/auth";
+import { register } from "@/lib/api/auth";
+import { RegisterPayload } from "@/types/RegisterPayload";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
@@ -9,13 +8,14 @@ export function useRegister() {
     const router = useRouter();
 
     return useMutation({
-        mutationFn: registerUser,
+        mutationFn: (payload: RegisterPayload) => register(payload),
         onSuccess: () => {
             toast.success("Registration successful!");
             router.push("/login");
         },
         onError: (err: any) => {
-            const msg = err?.response?.data?.message || "Registration failed";
+            console.log(err)
+            const msg = err?.response?.data?.errorMessage || "Registration failed";
             toast.error(msg);
         },
     });

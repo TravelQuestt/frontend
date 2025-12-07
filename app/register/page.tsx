@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRegister } from "@/hooks/auth/useRegister";
-import { registerSchema } from "@/schemas/register";
+import { RegisterSchema } from "@/schemas/register";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useState } from "react";
@@ -17,6 +17,7 @@ export default function RegisterPage() {
         name: "",
         email: "",
         password: "",
+        role: "USER"
     });
 
     const [error, setError] = useState("");
@@ -28,7 +29,7 @@ export default function RegisterPage() {
     const handleRegister = () => {
         setError("");
 
-        const parsed = registerSchema.safeParse(form);
+        const parsed = RegisterSchema.safeParse(form);
 
         if (!parsed.success) {
             setError(parsed.error.issues[0].message);

@@ -1,30 +1,13 @@
 import { LoginPayload } from "@/types/LoginPayload";
 import axios from "../axios";
-import { setCookie } from "cookies-next";
+import { RegisterPayload } from "@/types/RegisterPayload";
 
 export async function login(payload: LoginPayload) {
-  // const res = await axios.post("/auth/login", payload); // FIX ME
-  const res = {
-    data : {
-      token : "sss"
-    }
-  }
-  console.log(res.data);
-  setCookie("auth_token", res.data.token, {
-    path: "/",
-    secure: true,
-    sameSite: "strict",
-    maxAge: 60 * 60 * 24, // 1 day
-  });
-
+  const res = await axios.post("/user/login", payload);
   return res.data;
 }
 
-export async function registerUser(data: {
-  name: string;
-  email: string;
-  password: string;
-}) {
-  const res = await axios.post("/auth/register", data);
+export async function register(payload: RegisterPayload) {
+  const res = await axios.post("/user/register", payload);
   return res.data;
 }

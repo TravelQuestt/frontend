@@ -18,14 +18,19 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";   
+import { useState } from "react";
 
 export default function Navbar() {
     const { data: user } = getUser();
     const [mobileOpen, setMobileOpen] = useState(false);
     const pathname = usePathname();
+    const hideNavbar = ["/login", "/register"].includes(pathname);
     const logout = useLogout();
-    
+
+    if (hideNavbar) {
+        return null;
+    }
+
     const navLinks = [
         { href: "/feed", icon: <BookCopy className="w-4 h-4" />, label: "Feed" },
         { href: "/adventures", icon: <Compass className="w-4 h-4" />, label: "Adventures" },

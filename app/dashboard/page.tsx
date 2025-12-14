@@ -6,8 +6,11 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import AdventureCard from "@/components/common/adventures/AdventureCard";
 import { AdventureDTO } from "@/types/AdventureDTO";
+import { getStats } from "@/hooks/dashboard/getStats";
+import TravelCard from "@/components/common/adventures/TravelCard";
 
 export default function Dashboard() {
+    const { data: stats } = getStats();
     const { data: user } = getUser();
     const loading = false;
     const adventures: AdventureDTO[] = [
@@ -104,6 +107,7 @@ export default function Dashboard() {
     ];
     return (
         <div className="min-h-screen bg-background text-foreground">
+            <TravelCard/>
             <main className="px-4 sm:px-6 py-4 max-w-7xl mx-auto">
                 <h1 className="text-4xl sm:text-5xl font-semibold mb-2">Welcome, {user?.name}!</h1>
                 <p className="text-muted-foreground mt-1 mb-8">
@@ -112,25 +116,25 @@ export default function Dashboard() {
                 {/* Stats */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                     <div className="bg-muted rounded-xl p-4 flex flex-col justify-center">
-                        <p className="text-3xl font-bold text-pink-500">2</p>
+                        <p className="text-3xl font-bold text-pink-500">{stats?.totalAdventures}</p>
                         <div className="flex items-center gap-2 text-base mt-1">
                             <Plane className="w-4 h-4 text-pink-500" /> Total Adventures
                         </div>
                     </div>
                     <div className="bg-muted rounded-xl p-4 flex flex-col justify-center">
-                        <p className="text-3xl font-bold text-blue-500">3</p>
+                        <p className="text-3xl font-bold text-blue-500">{stats?.totalCountries}</p>
                         <div className="flex items-center gap-2 text-base mt-1">
                             <Flag className="w-4 h-4 text-blue-500" /> Countries Visited
                         </div>
                     </div>
                     <div className="bg-muted rounded-xl p-4 flex flex-col justify-center">
-                        <p className="text-3xl font-bold text-green-500">4</p>
+                        <p className="text-3xl font-bold text-green-500">{stats?.totalRegions}</p>
                         <div className="flex items-center gap-2 text-base mt-1">
                             <MapPin className="w-4 h-4 text-green-500" /> Total Visited Regions
                         </div>
                     </div>
                     <div className="bg-muted rounded-xl p-4 flex flex-col justify-center">
-                        <p className="text-3xl font-bold text-cyan-500">5</p>
+                        <p className="text-3xl font-bold text-cyan-500">{stats?.totalCities}</p>
                         <div className="flex items-center gap-2 text-base mt-1">
                             <Building2 className="w-4 h-4 text-cyan-500" /> Total Visited Cities
                         </div>

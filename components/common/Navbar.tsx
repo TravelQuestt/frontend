@@ -21,10 +21,10 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 export default function Navbar() {
-    const { data: user } = getUser();
     const [mobileOpen, setMobileOpen] = useState(false);
     const pathname = usePathname();
     const hideNavbar = ["/login", "/register"].includes(pathname);
+    const { data: user } = getUser({ enabled: !hideNavbar });
     const logout = useLogout();
 
     if (hideNavbar) {

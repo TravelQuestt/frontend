@@ -23,12 +23,12 @@ instance.interceptors.response.use(
   (response) => response,
   (error) => {
     const status = error?.response?.status;
-    console.log(status);
     if (status === 401) {
       console.log("logout")
       deleteCookie("auth_token")
+      sessionStorage.setItem('toast_message', 'Session Expired! Please login again');
+      sessionStorage.setItem('toast_type', 'error');
       window.location.href = "/login";
-      toast.error("Token Expired!")
     }
     return Promise.reject(error);
   }

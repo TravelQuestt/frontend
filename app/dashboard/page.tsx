@@ -1,13 +1,12 @@
 "use client"
 
-import { getUser } from "@/hooks/user/getUser";
-import { Building2, Flag, MapPin, Plane, PlusCircle } from "lucide-react";
-import { motion } from "framer-motion";
-import Link from "next/link";
 import AdventureCard from "@/components/common/adventures/AdventureCard";
-import { AdventureDTO } from "@/types/AdventureDTO";
 import { getStats } from "@/hooks/dashboard/getStats";
-import TravelCard from "@/components/common/adventures/TravelCard";
+import { getUser } from "@/hooks/user/getUser";
+import { AdventureDTO } from "@/types/AdventureDTO";
+import { motion } from "framer-motion";
+import { Building2, Flag, MapPin, Plane, PlusCircle } from "lucide-react";
+import Link from "next/link";
 
 export default function Dashboard() {
     const { data: stats } = getStats();
@@ -107,7 +106,6 @@ export default function Dashboard() {
     ];
     return (
         <div className="min-h-screen bg-background text-foreground">
-            <TravelCard/>
             <main className="px-4 sm:px-6 py-4 max-w-7xl mx-auto">
                 <h1 className="text-4xl sm:text-5xl font-semibold mb-2">Welcome, {user?.name}!</h1>
                 <p className="text-muted-foreground mt-1 mb-8">

@@ -1,16 +1,13 @@
 export interface AdventureDTO {
   id: number;
   name: string;
-  location: string;
-  tags: string[];
-  description: string;
   rating: number;
-  link: string;
-  publicVisibility: boolean;
+  description: string;
   latitude: number;
   longitude: number;
-  imageUrls: string[];
+  publicVisibility: boolean;
+  location: string;
+  tags: string[];
   createdAt: string;
-  likesCount: number;
-  likedByCurrentUser: boolean;
+  updatedAt: string;
 }

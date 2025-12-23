@@ -25,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${inter.className} antialiased`}
+        className={`${inter.className} antialiased min-h-screen`}
       >
         <ThemeProvider
           attribute="class"
@@ -37,7 +37,9 @@ export default function RootLayout({
           <ToastInitializer />
           <QueryProvider>
             <Navbar/>
+            <div className="max-w-7xl mx-auto px-4 pt-6">
             {children}
+            </div>
             <Footer/>
           </QueryProvider>
         </ThemeProvider>

@@ -24,3 +24,8 @@ export async function fetchMyAdventures(
 
     return res.data;
 }
+
+export async function fetchAdventure(id: number): Promise<AdventureDTO>{
+    const res = await axios.get<AdventureDTO>(`/adventures/${id}`);
+    return res.data;
+}

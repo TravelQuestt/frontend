@@ -1,24 +1,23 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Pencil } from "lucide-react";
+import { Tag, TagInput } from 'emblor-maintained';
+import { Pencil, Star } from "lucide-react";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { Tag, TagInput } from 'emblor-maintained';
 
 import {
     AlertDialog,
-    AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
+    AlertDialogDescription,
     AlertDialogFooter,
     AlertDialogHeader,
     AlertDialogTitle,
-    AlertDialogTrigger,
+    AlertDialogTrigger
 } from "../ui/alert-dialog";
 import { Button } from "../ui/button";
 
-import { Checkbox } from "@/components/ui/checkbox";
 import {
     Field,
     FieldDescription,
@@ -40,6 +39,7 @@ import {
     UpdateAdventureSchema,
 } from "@/schemas/updateAdventure";
 import { AdventureDTO } from "@/types/AdventureDTO";
+import { Switch } from "../ui/switch";
 
 interface UpdateAdventureDialogProps {
     adventureId: number;
@@ -68,33 +68,40 @@ export default function UpdateAdventureDialog({
     const descriptionValue = watch("description") ?? "";
     const nameValue = watch("name") ?? "";
     const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
+    const [open, setOpen] = useState(false);
 
     const handleUpdate = async (values: UpdateAdventureFormValues) => {
         if (!adventureId) return;
+
         setIsUpdating(true);
         try {
             await updateAdventure.mutateAsync({
                 adventureId,
                 data: values as AdventureDTO,
             });
+
+            setOpen(false);
         } finally {
             setIsUpdating(false);
         }
     };
 
     return (
-        <AlertDialog>
+        <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogTrigger asChild>
                 <Button variant="outline" className="gap-1">
                     <Pencil className="w-4 h-4" />
                 </Button>
             </AlertDialogTrigger>
 
-            <AlertDialogContent className="w-[90%] max-w-lg rounded-lg p-6">
+            <AlertDialogContent className="rounded-lg p-6 md:max-w-3xl">
                 <AlertDialogHeader>
                     <AlertDialogTitle className="text-xl font-bold">
                         Edit Adventure
                     </AlertDialogTitle>
+                    <AlertDialogDescription className="text-muted-foreground text-sm mt-2">
+                        Make changes to your adventure details and keep your journey up to date.
+                    </AlertDialogDescription>
                 </AlertDialogHeader>
 
                 <form onSubmit={handleSubmit(handleUpdate)}>
@@ -115,21 +122,59 @@ export default function UpdateAdventureDialog({
                             {errors.name && <FieldError errors={[errors.name]} />}
                         </Field>
 
-                        {/* RATING */}
-                        <Field data-invalid={touchedFields.rating && !!errors.rating}>
-                            <FieldLabel htmlFor="rating">Rating (0-5)</FieldLabel>
-                            <Input
-                                id="rating"
-                                type="number"
-                                step={0.1}
-                                min={0}
-                                max={5}
-                                {...register("rating", { valueAsNumber: true })}
-                                aria-invalid={!!errors.rating}
-                            />
-                            {errors.rating && <FieldError errors={[errors.rating]} />}
-                        </Field>
+                        <div className="flex gap-2">
+                            {/* RATING */}
+                            <Field data-invalid={touchedFields.rating && !!errors.rating}>
+                                <FieldLabel>Rating</FieldLabel>
 
+                                <Controller
+                                    control={control}
+                                    name="rating"
+                                    render={({ field }) => (
+                                        <div className="flex gap-1">
+                                            {[1, 2, 3, 4, 5].map((star) => (
+                                                <button
+                                                    key={star}
+                                                    type="button"
+                                                    onClick={() => field.onChange(star)}
+                                                    className="focus:outline-none"
+                                                    aria-label={`Rate ${star} star`}
+                                                >
+                                                    <Star
+                                                        className={`h-6 w-6 transition ${star <= (field.value ?? 0)
+                                                            ? "fill-yellow-400 text-yellow-400"
+                                                            : "text-muted-foreground"
+                                                            }`}
+                                                    />
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                />
+
+                                {errors.rating && <FieldError errors={[errors.rating]} />}
+                            </Field>
+                            {/* PUBLIC VISIBILITY */}
+                            <Field>
+                                <Controller
+                                    control={control}
+                                    name="publicVisibility"
+                                    render={({ field }) => (
+                                        <div className="flex flex-col items-start justify-between gap-4 px-3">
+                                            <FieldLabel htmlFor="publicVisibility">
+                                                Public Visibility
+                                            </FieldLabel>
+
+                                            <Switch
+                                                id="publicVisibility"
+                                                checked={field.value}
+                                                onCheckedChange={field.onChange}
+                                            />
+                                        </div>
+                                    )}
+                                />
+                            </Field>
+                        </div>
                         {/* DESCRIPTION */}
                         <Field data-invalid={touchedFields.description && !!errors.description}>
                             <FieldLabel htmlFor="description">Description</FieldLabel>
@@ -177,25 +222,7 @@ export default function UpdateAdventureDialog({
                             {errors.longitude && <FieldError errors={[errors.longitude]} />}
                         </Field>
 
-                        {/* PUBLIC VISIBILITY */}
-                        <Field>
-                            <Controller
-                                control={control}
-                                name="publicVisibility"
-                                render={({ field }) => (
-                                    <div className="flex items-center gap-2">
-                                        <Checkbox
-                                            id="publicVisibility"
-                                            checked={field.value}
-                                            onCheckedChange={field.onChange}
-                                        />
-                                        <FieldLabel htmlFor="publicVisibility">
-                                            Public Visibility
-                                        </FieldLabel>
-                                    </div>
-                                )}
-                            />
-                        </Field>
+
 
                         {/* TAGS */}
                         <Field data-invalid={touchedFields.tags && !!errors.tags}>
@@ -252,16 +279,21 @@ export default function UpdateAdventureDialog({
 
                     <AlertDialogFooter className="mt-6">
                         <AlertDialogCancel asChild>
-                            <Button type="button" variant="outline" onClick={() => reset(defaultValues)}>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => {
+                                    reset(defaultValues);
+                                    setOpen(false);
+                                }}
+                            >
                                 Cancel
                             </Button>
                         </AlertDialogCancel>
 
-                        <AlertDialogAction asChild>
-                            <Button type="submit" disabled={isUpdating}>
-                                {isUpdating ? "Updating..." : "Update Adventure"}
-                            </Button>
-                        </AlertDialogAction>
+                        <Button type="submit" disabled={isUpdating}>
+                            {isUpdating ? "Updating..." : "Update Adventure"}
+                        </Button>
                     </AlertDialogFooter>
                 </form>
             </AlertDialogContent>

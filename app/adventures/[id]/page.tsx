@@ -1,5 +1,6 @@
 "use client"
 
+import AdventureGallery from "@/components/adventures/AdventureGallery";
 import AdventureMap from "@/components/adventures/AdventureMap";
 import DeleteAdventureDialog from "@/components/adventures/DeleteAdventureDialog";
 import UpdateAdventureDialog from "@/components/adventures/EditAdventureDialog";
@@ -94,23 +95,26 @@ export default function AdventureDetails() {
                 </div>
             </div>
             {/* Tags */}
-            <div className="flex flex-col flex-wrap gap-2">
+            <div className="flex flex-col not-first:flex-wrap gap-2">
+
                 <h2 className="text-lg font-semibold mb-2">Tags</h2>
-                <AnimatePresence>
-                    {adventure?.tags.map(tag => (
-                        <motion.div
-                            key={tag}
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.8 }}
-                            transition={{ duration: 0.2 }}
-                        >
-                            <Badge variant="secondary" className="px-3 py-1 text-sm">
-                                {tag}
-                            </Badge>
-                        </motion.div>
-                    ))}
-                </AnimatePresence>
+                <div className="flex gap-2">
+                    <AnimatePresence>
+                        {adventure?.tags.map(tag => (
+                            <motion.div
+                                key={tag}
+                                initial={{ opacity: 0, scale: 0.8 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.8 }}
+                                transition={{ duration: 0.2 }}
+                            >
+                                <Badge variant="secondary" className="px-3 py-1 text-sm">
+                                    {tag}
+                                </Badge>
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
+                </div>
             </div>
             {/* Description */}
             <div className="py-4">
@@ -136,6 +140,9 @@ export default function AdventureDetails() {
                 >
                     <UploadCloud className="w-4 h-4" /> Upload Images
                 </Button>
+            </div>
+            <div>
+                {images && <AdventureGallery images={images} />}
             </div>
         </motion.div >
     );

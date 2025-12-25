@@ -9,7 +9,7 @@ export type FetchMyAdventuresParams = {
     order: string;
 };
 
-export async function fetchMyAdventures(
+export async function fetchAllAdventures(
     params: FetchMyAdventuresParams
 ): Promise<AdventureDTO[]> {
     const res = await axios.get<AdventureDTO[]>("/adventures", {
@@ -25,7 +25,11 @@ export async function fetchMyAdventures(
     return res.data;
 }
 
-export async function fetchAdventure(id: number): Promise<AdventureDTO>{
+export async function fetchAdventure(id: number): Promise<AdventureDTO> {
     const res = await axios.get<AdventureDTO>(`/adventures/${id}`);
     return res.data;
+}
+
+export async function deleteAdventure(id: number): Promise<void> {
+    await axios.delete(`/adventures/${id}`);
 }

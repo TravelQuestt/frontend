@@ -1,19 +1,18 @@
 "use client"
 
+import DeleteAdventureDialog from "@/components/adventures/DeleteAdventureDialog";
 import { Button } from "@/components/ui/button";
 import useAdventure from "@/hooks/adventures/useAdventure";
 import { format } from "date-fns";
 import { motion } from "framer-motion";
-import { MapPin, Trash2, UploadCloud } from "lucide-react";
+import { MapPin, Pencil, UploadCloud } from "lucide-react";
 import { useParams } from "next/navigation";
-import { useState } from "react";
 
 export default function AdventureDetails() {
     const params = useParams();
     const id = params?.id ? Number(params.id) : undefined;
     const { data: adventure, isLoading: adventureLoading, error } = useAdventure(id);
-    const [isDeleting, setIsDeleting] = useState(false);
-    console.log(adventure)
+    // make spinner for adventureLoading variable
     return (
         <motion.div
             className="p-6 space-y-6 max-w-5xl mx-auto"
@@ -37,15 +36,6 @@ export default function AdventureDetails() {
 
                 <div className="hidden sm:flex flex-wrap gap-2 justify-end">
                     <Button
-                        variant="destructive"
-                        // onClick={() => setShowDeleteDialog(true)}
-                        className="gap-1"
-                        disabled={isDeleting}
-                    >
-                        <Trash2 className="w-4 h-4" />
-                        {isDeleting ? "Deleting..." : "Delete Adventure"}
-                    </Button>
-                    <Button
                         variant="outline"
                         onClick={() =>
                             window.open(
@@ -57,12 +47,16 @@ export default function AdventureDetails() {
                     >
                         <MapPin className="w-4 h-4" /> Google Maps
                     </Button>
+                    {/* Delete Button */}
+                    {id && <DeleteAdventureDialog adventureId={id} />}
+                    
                     <Button
                         variant="secondary"
                         // onClick={() => (editing ? handleSaveAdventureDetails() : setEditing(true))}
                         className="gap-1"
                     // disabled={isSavingDetails}
                     >
+                        <Pencil className="w-4 h-4" />
                         {/* {editing ? <Save className="w-4 h-4" /> : <Pencil className="w-4 h-4" />}
                         {editing ? (isSavingDetails ? "Saving..." : "Save Details") : "Edit Details"} */}
                     </Button>

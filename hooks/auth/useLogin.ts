@@ -31,7 +31,7 @@ export function useLogin() {
       router.replace("/dashboard");
     },
     onError: (err: any) => {
-      throw err.response?.data?.message || "Login failed";
+      toast.error(err.response?.data?.errorMessage || "Login failed");
     },
   });
 }

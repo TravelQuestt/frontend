@@ -24,11 +24,7 @@ export default function LoginPage() {
     });
 
     async function onSubmit(values: any) {
-        try {
-            await mutateAsync(values);
-        } catch (err: any) {
-            alert(err || "Login failed");
-        }
+        await mutateAsync(values);
     }
 
     return (

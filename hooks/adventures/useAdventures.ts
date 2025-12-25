@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { fetchMyAdventures } from "@/lib/api/adventures";
+import { fetchAllAdventures } from "@/lib/api/adventures";
 
 type UseMyAdventuresParams = {
   page: number;
@@ -24,7 +24,7 @@ export default function useAdventures({
       filters.orderDirection,
     ],
     queryFn: () =>
-      fetchMyAdventures({
+      fetchAllAdventures({
         page,
         searchTerm,
         sortBy: filters.orderBy,

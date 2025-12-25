@@ -4,6 +4,7 @@ import AdventureGallery from "@/components/adventures/AdventureGallery";
 import AdventureMap from "@/components/adventures/AdventureMap";
 import DeleteAdventureDialog from "@/components/adventures/DeleteAdventureDialog";
 import UpdateAdventureDialog from "@/components/adventures/EditAdventureDialog";
+import { UploadImageDialog } from "@/components/adventures/UploadImageDialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Item, ItemContent, ItemDescription } from "@/components/ui/item";
@@ -134,12 +135,7 @@ export default function AdventureDetails() {
                     <h2 className="text-lg font-semibold">Gallery</h2>
                     <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap text-sm">Moments and memories from this adventure.</p>
                 </div>
-                <Button
-                    variant="default"
-                    className="gap-1"
-                >
-                    <UploadCloud className="w-4 h-4" /> Upload Images
-                </Button>
+                {adventure && <UploadImageDialog adventureId={adventure?.id} />}
             </div>
             <div>
                 {images && <AdventureGallery images={images} />}

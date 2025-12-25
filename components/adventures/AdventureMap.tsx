@@ -220,9 +220,9 @@ export default function AdventureMap({
                 </>
             )}
 
-            <p className="text-[10px] text-muted-foreground text-center uppercase tracking-wider font-medium">
+            {/* <p className="text-[10px] text-muted-foreground text-center uppercase tracking-wider font-medium">
                 Lat: {coordinates[1]?.toFixed(5) || "0"} | Lng: {coordinates[0]?.toFixed(5) || "0"}
-            </p>
+            </p> */}
         </div>
     );
 }

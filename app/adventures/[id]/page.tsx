@@ -3,18 +3,22 @@
 import AdventureMap from "@/components/adventures/AdventureMap";
 import DeleteAdventureDialog from "@/components/adventures/DeleteAdventureDialog";
 import UpdateAdventureDialog from "@/components/adventures/EditAdventureDialog";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Item, ItemContent, ItemDescription } from "@/components/ui/item";
 import useAdventure from "@/hooks/adventures/useAdventure";
+import useImages from "@/hooks/images/useImages";
 import { format } from "date-fns";
-import { motion } from "framer-motion";
-import { MapPin, Pencil, UploadCloud } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { MapPin, Star, UploadCloud } from "lucide-react";
 import { useParams } from "next/navigation";
 
 export default function AdventureDetails() {
     const params = useParams();
     const id = params?.id ? Number(params.id) : undefined;
-    const { data: adventure, isLoading: adventureLoading, error } = useAdventure(id);
-
+    const { data: adventure, isLoading: adventureLoading } = useAdventure(id);
+    const { data: images, isLoading: imagesLoading } = useImages(id);
+    console.log(images)
     if (adventureLoading) return <div>loading</div>
     // make spinner for adventureLoading variable
     return (
@@ -55,13 +59,7 @@ export default function AdventureDetails() {
                     {/* Delete Button */}
                     {id && <DeleteAdventureDialog adventureId={id} />} {/* FIX ME */}
                     {id && adventure && <UpdateAdventureDialog adventureId={id} defaultValues={adventure} />} {/* FIX ME */}
-                    <Button
-                        variant="default"
-                        // onClick={() => setUploadingPhotos(prev => !prev)}
-                        className="gap-1"
-                    >
-                        <UploadCloud className="w-4 h-4" /> Upload Images
-                    </Button>
+
                 </div>
             </div>
             <motion.div
@@ -72,6 +70,73 @@ export default function AdventureDetails() {
             >
                 {adventure && <AdventureMap coordinates={[adventure?.longitude, adventure?.latitude]} />}
             </motion.div>
-        </motion.div>
+            <div className="flex justify-between">
+                <div className="flex items-center gap-3 text-muted-foreground">
+                    <MapPin className="w-4 h-4" /> {adventure?.location}
+                </div>
+                <div>{adventure?.publicVisibility}</div>
+                <div className="flex gap-1">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                        <button
+                            key={star}
+                            type="button"
+                            className="focus:outline-none"
+                            aria-label={`Rate ${star} star`}
+                        >
+                            <Star
+                                className={`h-6 w-6 transition ${star <= (adventure?.rating ?? 0)
+                                    ? "fill-yellow-400 text-yellow-400"
+                                    : "text-muted-foreground"
+                                    }`}
+                            />
+                        </button>
+                    ))}
+                </div>
+            </div>
+            {/* Tags */}
+            <div className="flex flex-col flex-wrap gap-2">
+                <h2 className="text-lg font-semibold mb-2">Tags</h2>
+                <AnimatePresence>
+                    {adventure?.tags.map(tag => (
+                        <motion.div
+                            key={tag}
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.8 }}
+                            transition={{ duration: 0.2 }}
+                        >
+                            <Badge variant="secondary" className="px-3 py-1 text-sm">
+                                {tag}
+                            </Badge>
+                        </motion.div>
+                    ))}
+                </AnimatePresence>
+            </div>
+            {/* Description */}
+            <div className="py-4">
+                <h2 className="text-lg font-semibold mb-2">Description</h2>
+                {/* <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{adventure?.description}</p> */}
+                <Item variant="outline">
+                    <ItemContent>
+                        <ItemDescription>
+                            {adventure?.description}
+                        </ItemDescription>
+                    </ItemContent>
+                </Item>
+            </div>
+            {/* Gallery */}
+            <div className="flex justify-between">
+                <div>
+                    <h2 className="text-lg font-semibold">Gallery</h2>
+                    <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap text-sm">Moments and memories from this adventure.</p>
+                </div>
+                <Button
+                    variant="default"
+                    className="gap-1"
+                >
+                    <UploadCloud className="w-4 h-4" /> Upload Images
+                </Button>
+            </div>
+        </motion.div >
     );
 }

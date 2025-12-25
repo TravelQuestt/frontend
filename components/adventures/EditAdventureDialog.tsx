@@ -111,164 +111,173 @@ export default function UpdateAdventureDialog({
                 </AlertDialogHeader>
 
                 <form onSubmit={handleSubmit(handleUpdate)}>
-                    <FieldGroup>
-                        {/* NAME */}
-                        <Field data-invalid={touchedFields.name && !!errors.name}>
-                            <FieldLabel htmlFor="name">Adventure Name</FieldLabel>
-                            <Input
-                                id="name"
-                                {...register("name")}
-                                aria-invalid={!!errors.name}
-                                autoComplete="off"
-                                placeholder="Enter adventure name"
-                            />
-                            <FieldDescription>
-                                {nameValue.length}/120 characters
-                            </FieldDescription>
-                            {errors.name && <FieldError errors={[errors.name]} />}
-                        </Field>
+                    <div className="rounded-lg p-6 md:max-w-3xl max-h-[70vh] overflow-y-auto">
 
-                        <div className="flex gap-2">
-                            {/* RATING */}
-                            <Field data-invalid={touchedFields.rating && !!errors.rating}>
-                                <FieldLabel>Rating</FieldLabel>
-
-                                <Controller
-                                    control={control}
-                                    name="rating"
-                                    render={({ field }) => (
-                                        <div className="flex gap-1">
-                                            {[1, 2, 3, 4, 5].map((star) => (
-                                                <button
-                                                    key={star}
-                                                    type="button"
-                                                    onClick={() => field.onChange(star)}
-                                                    className="focus:outline-none"
-                                                    aria-label={`Rate ${star} star`}
-                                                >
-                                                    <Star
-                                                        className={`h-6 w-6 transition ${star <= (field.value ?? 0)
-                                                            ? "fill-yellow-400 text-yellow-400"
-                                                            : "text-muted-foreground"
-                                                            }`}
-                                                    />
-                                                </button>
-                                            ))}
-                                        </div>
-                                    )}
+                        <FieldGroup>
+                            {/* NAME */}
+                            <Field data-invalid={touchedFields.name && !!errors.name}>
+                                <FieldLabel htmlFor="name">Adventure Name</FieldLabel>
+                                <Input
+                                    id="name"
+                                    {...register("name")}
+                                    aria-invalid={!!errors.name}
+                                    autoComplete="off"
+                                    placeholder="Enter adventure name"
                                 />
-
-                                {errors.rating && <FieldError errors={[errors.rating]} />}
-                            </Field>
-                            {/* PUBLIC VISIBILITY */}
-                            <Field>
-                                <Controller
-                                    control={control}
-                                    name="publicVisibility"
-                                    render={({ field }) => (
-                                        <div className="flex flex-col items-start justify-between gap-4 px-3">
-                                            <FieldLabel htmlFor="publicVisibility">
-                                                Public Visibility
-                                            </FieldLabel>
-
-                                            <Switch
-                                                id="publicVisibility"
-                                                checked={field.value}
-                                                onCheckedChange={field.onChange}
-                                            />
-                                        </div>
-                                    )}
-                                />
-                            </Field>
-                        </div>
-                        {/* MAP INTEGRATION */}
-                        <Field>
-                            <div className="flex flex-col">
-                                <FieldLabel>Location</FieldLabel>
                                 <FieldDescription>
-                                    Search for a location or click on the map to drop a pin.
+                                    {nameValue.length}/120 characters
                                 </FieldDescription>
+                                {errors.name && <FieldError errors={[errors.name]} />}
+                            </Field>
+
+                            <div className="flex gap-2">
+                                {/* RATING */}
+                                <Field data-invalid={touchedFields.rating && !!errors.rating}>
+                                    <FieldLabel>Rating</FieldLabel>
+
+                                    <Controller
+                                        control={control}
+                                        name="rating"
+                                        render={({ field }) => (
+                                            <div className="flex gap-1">
+                                                {[1, 2, 3, 4, 5].map((star) => (
+                                                    <button
+                                                        key={star}
+                                                        type="button"
+                                                        onClick={() => field.onChange(star)}
+                                                        className="focus:outline-none"
+                                                        aria-label={`Rate ${star} star`}
+                                                    >
+                                                        <Star
+                                                            className={`h-6 w-6 transition ${star <= (field.value ?? 0)
+                                                                ? "fill-yellow-400 text-yellow-400"
+                                                                : "text-muted-foreground"
+                                                                }`}
+                                                        />
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        )}
+                                    />
+
+                                    {errors.rating && <FieldError errors={[errors.rating]} />}
+                                </Field>
+                                {/* PUBLIC VISIBILITY */}
+                                <Field>
+                                    <Controller
+                                        control={control}
+                                        name="publicVisibility"
+                                        render={({ field }) => (
+                                            <div className="flex flex-col items-start justify-between gap-4 px-3">
+                                                <FieldLabel htmlFor="publicVisibility">
+                                                    Public Visibility
+                                                </FieldLabel>
+
+                                                <Switch
+                                                    id="publicVisibility"
+                                                    checked={field.value}
+                                                    onCheckedChange={field.onChange}
+                                                />
+                                            </div>
+                                        )}
+                                    />
+                                </Field>
                             </div>
-                            <AdventureMap
-                                coordinates={[lng, lat]}
-                                onMapClick={handleMapMove}
-                                isEditable={true}
-                            />
-                        </Field>
-
-                        {/* DESCRIPTION */}
-                        <Field data-invalid={touchedFields.description && !!errors.description}>
-                            <FieldLabel htmlFor="description">Description</FieldLabel>
-                            <InputGroup>
-                                <InputGroupTextarea
-                                    id="description"
-                                    rows={6}
-                                    className="min-h-24 resize-none"
-                                    {...register("description")}
-                                    aria-invalid={!!errors.description}
+                            {/* MAP INTEGRATION */}
+                            <Field>
+                                <div className="flex flex-col">
+                                    <FieldLabel>Location</FieldLabel>
+                                    <FieldDescription>
+                                        Search for a location or click on the map to drop a pin.
+                                    </FieldDescription>
+                                </div>
+                                <AdventureMap
+                                    coordinates={[lng, lat]}
+                                    onMapClick={handleMapMove}
+                                    isEditable={true}
                                 />
-                                <InputGroupAddon align="block-end">
-                                    <InputGroupText className="tabular-nums">
-                                        {descriptionValue.length}/2000
-                                    </InputGroupText>
-                                </InputGroupAddon>
-                            </InputGroup>
-                            <FieldDescription>Adventure details, up to 2000 chars.</FieldDescription>
-                            {errors.description && <FieldError errors={[errors.description]} />}
-                        </Field>
+                            </Field>
 
-                        {/* TAGS */}
-                        <Field data-invalid={touchedFields.tags && !!errors.tags}>
-                            <FieldLabel>Tags (max 5)</FieldLabel>
+                            {/* DESCRIPTION */}
+                            <Field data-invalid={touchedFields.description && !!errors.description}>
+                                <FieldLabel htmlFor="description">Description</FieldLabel>
+                                <InputGroup>
+                                    <InputGroupTextarea
+                                        id="description"
+                                        rows={6}
+                                        className="min-h-24 resize-none"
+                                        {...register("description")}
+                                        aria-invalid={!!errors.description}
+                                    />
+                                    <InputGroupAddon align="block-end">
+                                        <InputGroupText className="tabular-nums">
+                                            {descriptionValue.length}/2000
+                                        </InputGroupText>
+                                    </InputGroupAddon>
+                                </InputGroup>
+                                <FieldDescription>Adventure details, up to 2000 chars.</FieldDescription>
+                                {errors.description && <FieldError errors={[errors.description]} />}
+                            </Field>
 
-                            <Controller
-                                name="tags"
-                                control={control}
-                                render={({ field }) => {
-                                    const tagsAsObjects: Tag[] =
-                                        (field.value ?? []).map((t) => ({ id: t, text: t }));
+                            {/* TAGS */}
+                            <Field data-invalid={touchedFields.tags && !!errors.tags}>
+                                <FieldLabel>Tags (max 5)</FieldLabel>
 
-                                    return (
-                                        <TagInput
-                                            tags={tagsAsObjects}
-                                            activeTagIndex={activeTagIndex}
-                                            setActiveTagIndex={setActiveTagIndex}
-                                            placeholder="Add a tag"
-                                            className="w-full"
-                                            setTags={(newTags) => {
-                                                const resolvedTags =
-                                                    typeof newTags === "function"
-                                                        ? newTags(tagsAsObjects)
-                                                        : newTags;
+                                <Controller
+                                    name="tags"
+                                    control={control}
+                                    render={({ field }) => {
+                                        const tagsAsObjects: Tag[] =
+                                            (field.value ?? []).map((t) => ({ id: t, text: t }));
 
-                                                const tagStrings = resolvedTags
-                                                    .map((t) => t.text.trim())
-                                                    .filter(Boolean)
-                                                    .slice(0, 5);
+                                        return (
+                                            <TagInput
+                                                tags={tagsAsObjects}
+                                                activeTagIndex={activeTagIndex}
+                                                setActiveTagIndex={setActiveTagIndex}
+                                                placeholder="Add a tag"
+                                                className="w-full"
+                                                setTags={(newTags) => {
+                                                    const resolvedTags =
+                                                        typeof newTags === "function"
+                                                            ? newTags(tagsAsObjects)
+                                                            : newTags;
 
-                                                field.onChange(tagStrings);
-                                            }}
-                                        />
-                                    );
-                                }}
-                            />
+                                                    const tagStrings = resolvedTags
+                                                        .map((t) => t.text.trim())
+                                                        .filter(Boolean)
+                                                        .slice(0, 5);
 
-
-                            {errors.tags && (
-                                <FieldError
-                                    errors={
-                                        Array.isArray(errors.tags)
-                                            ? errors.tags.map((e) => ({ message: e?.message }))
-                                            : [{ message: errors.tags.message }]
-                                    }
+                                                    field.onChange(tagStrings);
+                                                }}
+                                                styleClasses={{
+                                                    input: "focus-visible:ring-0 shadow-none border-none",
+                                                    tag: {
+                                                        body: "bg-primary/10 text-primary border-none rounded-md pl-4 py-1",
+                                                        closeButton: "text-primary hover:text-destructive transition-colors",
+                                                    },
+                                                }}
+                                            />
+                                        );
+                                    }}
                                 />
-                            )}
 
-                            <FieldDescription>Press enter to add a tag (max 5)</FieldDescription>
-                        </Field>
 
-                    </FieldGroup>
+                                {errors.tags && (
+                                    <FieldError
+                                        errors={
+                                            Array.isArray(errors.tags)
+                                                ? errors.tags.map((e) => ({ message: e?.message }))
+                                                : [{ message: errors.tags.message }]
+                                        }
+                                    />
+                                )}
 
+                                <FieldDescription>Press enter to add a tag (max 5)</FieldDescription>
+                            </Field>
+
+                        </FieldGroup>
+                    </div>
                     <AlertDialogFooter className="mt-6">
                         <AlertDialogCancel asChild>
                             <Button

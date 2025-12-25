@@ -1,5 +1,6 @@
 "use client"
 
+import AdventureMap from "@/components/adventures/AdventureMap";
 import DeleteAdventureDialog from "@/components/adventures/DeleteAdventureDialog";
 import UpdateAdventureDialog from "@/components/adventures/EditAdventureDialog";
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,8 @@ export default function AdventureDetails() {
     const params = useParams();
     const id = params?.id ? Number(params.id) : undefined;
     const { data: adventure, isLoading: adventureLoading, error } = useAdventure(id);
+
+    if (adventureLoading) return <div>loading</div>
     // make spinner for adventureLoading variable
     return (
         <motion.div
@@ -36,6 +39,7 @@ export default function AdventureDetails() {
                 </div>
 
                 <div className="hidden sm:flex flex-wrap gap-2 justify-end">
+                    {/* GMAPS Button */}
                     <Button
                         variant="outline"
                         onClick={() =>
@@ -49,7 +53,7 @@ export default function AdventureDetails() {
                         <MapPin className="w-4 h-4" /> Google Maps
                     </Button>
                     {/* Delete Button */}
-                    {id && <DeleteAdventureDialog adventureId={id} />}
+                    {id && <DeleteAdventureDialog adventureId={id} />} {/* FIX ME */}
                     {id && adventure && <UpdateAdventureDialog adventureId={id} defaultValues={adventure} />} {/* FIX ME */}
                     <Button
                         variant="default"
@@ -60,6 +64,14 @@ export default function AdventureDetails() {
                     </Button>
                 </div>
             </div>
+            <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.1, duration: 0.5 }}
+                className="w-full rounded-lg overflow-hidden shadow-md"
+            >
+                {adventure && <AdventureMap coordinates={[adventure?.longitude, adventure?.latitude]} />}
+            </motion.div>
         </motion.div>
     );
 }

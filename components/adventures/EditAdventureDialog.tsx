@@ -40,6 +40,7 @@ import {
 } from "@/schemas/updateAdventure";
 import { AdventureDTO } from "@/types/AdventureDTO";
 import { Switch } from "../ui/switch";
+import AdventureMap from "./AdventureMap";
 
 interface UpdateAdventureDialogProps {
     adventureId: number;
@@ -59,12 +60,14 @@ export default function UpdateAdventureDialog({
         reset,
         watch,
         control,
+        setValue,
         formState: { errors, touchedFields },
     } = useForm<UpdateAdventureFormValues>({
         resolver: zodResolver(UpdateAdventureSchema),
         defaultValues,
     });
-
+    const lat = watch("latitude");
+    const lng = watch("longitude");
     const descriptionValue = watch("description") ?? "";
     const nameValue = watch("name") ?? "";
     const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null);
@@ -85,7 +88,10 @@ export default function UpdateAdventureDialog({
             setIsUpdating(false);
         }
     };
-
+    const handleMapMove = (coords: [number, number]) => {
+        setValue("longitude", coords[0], { shouldDirty: true, shouldValidate: true });
+        setValue("latitude", coords[1], { shouldDirty: true, shouldValidate: true });
+    };
     return (
         <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogTrigger asChild>
@@ -175,6 +181,21 @@ export default function UpdateAdventureDialog({
                                 />
                             </Field>
                         </div>
+                        {/* MAP INTEGRATION */}
+                        <Field>
+                            <div className="flex flex-col">
+                                <FieldLabel>Location</FieldLabel>
+                                <FieldDescription>
+                                    Search for a location or click on the map to drop a pin.
+                                </FieldDescription>
+                            </div>
+                            <AdventureMap
+                                coordinates={[lng, lat]}
+                                onMapClick={handleMapMove}
+                                isEditable={true}
+                            />
+                        </Field>
+
                         {/* DESCRIPTION */}
                         <Field data-invalid={touchedFields.description && !!errors.description}>
                             <FieldLabel htmlFor="description">Description</FieldLabel>
@@ -196,34 +217,6 @@ export default function UpdateAdventureDialog({
                             {errors.description && <FieldError errors={[errors.description]} />}
                         </Field>
 
-                        {/* LATITUDE */}
-                        <Field data-invalid={touchedFields.latitude && !!errors.latitude}>
-                            <FieldLabel htmlFor="latitude">Latitude</FieldLabel>
-                            <Input
-                                id="latitude"
-                                type="number"
-                                step={0.000001}
-                                {...register("latitude", { valueAsNumber: true })}
-                                aria-invalid={!!errors.latitude}
-                            />
-                            {errors.latitude && <FieldError errors={[errors.latitude]} />}
-                        </Field>
-
-                        {/* LONGITUDE */}
-                        <Field data-invalid={touchedFields.longitude && !!errors.longitude}>
-                            <FieldLabel htmlFor="longitude">Longitude</FieldLabel>
-                            <Input
-                                id="longitude"
-                                type="number"
-                                step={0.000001}
-                                {...register("longitude", { valueAsNumber: true })}
-                                aria-invalid={!!errors.longitude}
-                            />
-                            {errors.longitude && <FieldError errors={[errors.longitude]} />}
-                        </Field>
-
-
-
                         {/* TAGS */}
                         <Field data-invalid={touchedFields.tags && !!errors.tags}>
                             <FieldLabel>Tags (max 5)</FieldLabel>
@@ -243,7 +236,6 @@ export default function UpdateAdventureDialog({
                                             placeholder="Add a tag"
                                             className="w-full"
                                             setTags={(newTags) => {
-                                                // 🔑 Normalize SetStateAction<Tag[]>
                                                 const resolvedTags =
                                                     typeof newTags === "function"
                                                         ? newTags(tagsAsObjects)

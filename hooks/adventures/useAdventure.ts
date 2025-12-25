@@ -6,6 +6,5 @@ export default function useAdventure(id?: number) {
     queryKey: ["adventure", id],
     queryFn: () => fetchAdventure(id!),
     enabled: !!id,
-    staleTime: 30_000,
   });
 }

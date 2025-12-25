@@ -1,6 +1,7 @@
 "use client"
 
 import DeleteAdventureDialog from "@/components/adventures/DeleteAdventureDialog";
+import UpdateAdventureDialog from "@/components/adventures/EditAdventureDialog";
 import { Button } from "@/components/ui/button";
 import useAdventure from "@/hooks/adventures/useAdventure";
 import { format } from "date-fns";
@@ -49,17 +50,7 @@ export default function AdventureDetails() {
                     </Button>
                     {/* Delete Button */}
                     {id && <DeleteAdventureDialog adventureId={id} />}
-                    
-                    <Button
-                        variant="secondary"
-                        // onClick={() => (editing ? handleSaveAdventureDetails() : setEditing(true))}
-                        className="gap-1"
-                    // disabled={isSavingDetails}
-                    >
-                        <Pencil className="w-4 h-4" />
-                        {/* {editing ? <Save className="w-4 h-4" /> : <Pencil className="w-4 h-4" />}
-                        {editing ? (isSavingDetails ? "Saving..." : "Save Details") : "Edit Details"} */}
-                    </Button>
+                    {id && adventure && <UpdateAdventureDialog adventureId={id} defaultValues={adventure} />} {/* FIX ME */}
                     <Button
                         variant="default"
                         // onClick={() => setUploadingPhotos(prev => !prev)}

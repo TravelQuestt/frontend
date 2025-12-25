@@ -1,5 +1,6 @@
 import axios from "@/lib/axios";
 import { AdventureDTO } from "@/types/AdventureDTO";
+import { AdventurePayload } from "@/types/AdventurePayload";
 
 export type FetchMyAdventuresParams = {
     page: number;
@@ -32,4 +33,9 @@ export async function fetchAdventure(id: number): Promise<AdventureDTO> {
 
 export async function deleteAdventure(id: number): Promise<void> {
     await axios.delete(`/adventures/${id}`);
+}
+
+export async function updateAdventure(id:number, adventure: AdventurePayload){
+    console.log(adventure)
+    await axios.put(`/adventures/${id}`,adventure);
 }

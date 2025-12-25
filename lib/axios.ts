@@ -1,6 +1,5 @@
 import axios from "axios";
 import { deleteCookie, getCookie } from "cookies-next";
-import { toast } from "react-toastify";
 
 const instance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:9000",

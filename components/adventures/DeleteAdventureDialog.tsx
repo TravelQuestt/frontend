@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '../ui/alert-dialog'
-import { Button } from '../ui/button'
-import { Trash2 } from 'lucide-react'
 import useDeleteAdventure from '@/hooks/adventures/useDeleteAdventure';
+import { Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '../ui/alert-dialog';
+import { Button } from '../ui/button';
 
 interface DeleteAdventureDialogProps {
     adventureId: number;

@@ -23,7 +23,6 @@ export default function AdventureDetails() {
     const { data: images, isLoading: imagesLoading } = useImages(id);
     const [deleting, setDeleteing] = useState(false);
     if (adventureLoading) return <div>loading</div>
-    console.log(adventure)
     const MutedText = ({ children }: { children?: React.ReactNode }) => (
         <Badge
             variant="secondary"

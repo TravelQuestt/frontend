@@ -137,7 +137,7 @@ export function UploadImageDialog({ adventureId }: Props) {
                     <DialogTitle>Upload images</DialogTitle>
                 </DialogHeader>
 
-                <form onSubmit={handleSubmit(onSubmit, (err) => console.log("Zod Errors:", err))}>
+                <form onSubmit={handleSubmit(onSubmit)}>
                     {/* Upload Area */}
                     <Controller
                         control={control}

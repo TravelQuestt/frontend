@@ -17,11 +17,9 @@ export default function QueryProvider({ children }: { children: ReactNode }) {
             queries: {
                 retry: (failureCount, error) => {
                     if (isUnauthorized(error)) {
-                        console.log("401 detected. Disabling retry.");
                         return false;
                     }
                     const maxRetries = 3;
-                    console.log(failureCount < maxRetries)
                     return failureCount < maxRetries;
                 },
             }

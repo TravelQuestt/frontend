@@ -14,7 +14,6 @@ export function useRegister() {
             router.push("/login");
         },
         onError: (err: any) => {
-            console.log(err)
             const msg = err?.response?.data?.errorMessage || "Registration failed";
             toast.error(msg);
         },

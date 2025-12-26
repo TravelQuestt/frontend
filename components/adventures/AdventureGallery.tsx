@@ -14,6 +14,7 @@ import { Trash2 } from "lucide-react";
 import { useDeleteImage } from "@/hooks/images/useDeleteImage";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../ui/alert-dialog";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 interface Props {
     deleting: boolean;
@@ -27,7 +28,12 @@ export default function AdventureGallery({ images, deleting, adventureId }: Prop
 
     const handleConfirmDelete = async () => {
         if (!confirmImageId) return;
-        await deleteImage.mutateAsync(confirmImageId);
+        await toast.promise(
+            deleteImage.mutateAsync(confirmImageId),
+            {
+                pending: "Deleting image...",
+            }
+        );
         setConfirmImageId(null);
     };
     return (

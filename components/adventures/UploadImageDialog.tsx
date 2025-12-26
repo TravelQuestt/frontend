@@ -54,14 +54,21 @@ export function UploadImageDialog({ adventureId }: Props) {
             }
 
             let finalFile = file;
+            let compressedBlob = file;
 
             if (file.size / 1024 / 1024 > MAX_SIZE_MB) {
                 try {
-                    finalFile = await imageCompression(file, {
+                    compressedBlob = await imageCompression(file, {
                         maxSizeMB: MAX_SIZE_MB,
                         maxWidthOrHeight: 1920,
                         useWebWorker: true,
                     });
+                    finalFile = new File([compressedBlob], file.name, {
+                        type: file.type,
+                        lastModified: Date.now(),
+                    });
+
+                    toast.success(`${file.name} compressed successfully`);
                 } catch {
                     rejected.push(`${file.name} (compression failed)`);
                     continue;
@@ -87,7 +94,10 @@ export function UploadImageDialog({ adventureId }: Props) {
         }
 
         setFiles(combinedFiles);
-        setValue("images", combinedFiles);
+        setValue("images", combinedFiles, {
+            shouldValidate: true,
+            shouldDirty: true
+        });
     }
 
     function removeFile(index: number) {
@@ -127,7 +137,7 @@ export function UploadImageDialog({ adventureId }: Props) {
                     <DialogTitle>Upload images</DialogTitle>
                 </DialogHeader>
 
-                <form onSubmit={handleSubmit(onSubmit)}>
+                <form onSubmit={handleSubmit(onSubmit, (err) => console.log("Zod Errors:", err))}>
                     {/* Upload Area */}
                     <Controller
                         control={control}

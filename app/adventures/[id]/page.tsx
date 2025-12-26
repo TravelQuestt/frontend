@@ -21,6 +21,7 @@ export default function AdventureDetails() {
     const id = params?.id ? Number(params.id) : undefined;
     const { data: adventure, isLoading: adventureLoading } = useAdventure(id);
     const { data: images, isLoading: imagesLoading } = useImages(id);
+    console.log(images)
     const [deleting, setDeleteing] = useState(false);
     if (adventureLoading) return <div>loading</div>
     const MutedText = ({ children }: { children?: React.ReactNode }) => (

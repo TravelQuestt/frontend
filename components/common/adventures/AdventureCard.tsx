@@ -11,8 +11,8 @@ type AdventureCardProps = {
 export default function AdventureCard({ adventure }: AdventureCardProps) {
 
   const coverImageUrl =
-    adventure.imageUrls && adventure.imageUrls.length > 0
-      ? adventure.imageUrls[0]
+    adventure.coverImageUrl && adventure.coverImageUrl.length > 0
+      ? adventure.coverImageUrl
       : "/adventure_place.webp";
 
   return (

@@ -95,6 +95,7 @@ export default function AdventuresPage() {
                     transition={{ duration: 0.4 }}
                 >
                     <h1 className="text-2xl font-bold">My Adventures</h1>
+                    <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap text-sm">A timeline of places you’ve lived, not just visited.</p>
                 </motion.div>
 
                 <p className="hidden lg:block text-muted-foreground text-sm mb-6">

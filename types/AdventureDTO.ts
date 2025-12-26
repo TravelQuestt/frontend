@@ -6,6 +6,7 @@ export interface AdventureDTO {
   latitude: number;
   longitude: number;
   publicVisibility: boolean;
+  coverImageUrl: string;
   location: string;
   tags: string[];
   createdAt: Date;

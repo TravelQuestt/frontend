@@ -8,6 +8,6 @@ export interface AdventureDTO {
   publicVisibility: boolean;
   location: string;
   tags: string[];
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }

@@ -10,11 +10,11 @@ import { Button } from "@/components/ui/button";
 import { Item, ItemContent, ItemDescription } from "@/components/ui/item";
 import useAdventure from "@/hooks/adventures/useAdventure";
 import useImages from "@/hooks/images/useImages";
-import { format } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
-import { MapPin, Star, Trash2, UploadCloud } from "lucide-react";
+import { Clock, MapPin, Star, Trash2 } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useState } from "react";
+import TimeAgo from 'react-timeago';
 
 export default function AdventureDetails() {
     const params = useParams();
@@ -23,6 +23,17 @@ export default function AdventureDetails() {
     const { data: images, isLoading: imagesLoading } = useImages(id);
     const [deleting, setDeleteing] = useState(false);
     if (adventureLoading) return <div>loading</div>
+    console.log(adventure)
+    const MutedText = ({ children }: { children?: React.ReactNode }) => (
+        <Badge
+            variant="secondary"
+            className="flex items-center gap-1 px-2 py-1 text-xs font-normal mt-3"
+        >
+            <Clock className="h-3 w-3 opacity-70" />
+            <span className="opacity-80">Updated</span>
+            <span className="font-medium">{children}</span>
+        </Badge>
+    );
     // make spinner for adventureLoading variable
     return (
         <motion.div
@@ -34,14 +45,8 @@ export default function AdventureDetails() {
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
                 <div>
                     <h1 className="text-4xl font-bold text-primary mb-1">✈️ {adventure?.name}</h1>
-                    {adventure?.createdAt && (
-                        <p className="text-sm text-muted-foreground">
-                            Created at:{" "}
-                            {format(
-                                new Date(adventure.createdAt),
-                                "dd MMM yyyy, hh:mm a"
-                            )}
-                        </p>
+                    {adventure?.updatedAt && (
+                        <TimeAgo date={adventure.updatedAt} component={MutedText} />
                     )}
                 </div>
 

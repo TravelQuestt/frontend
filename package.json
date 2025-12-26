@@ -44,6 +44,7 @@
     "react-dom": "19.2.0",
     "react-hook-form": "^7.67.0",
     "react-loading-indicators": "^1.0.1",
+    "react-timeago": "^8.3.0",
     "react-toastify": "^11.0.5",
     "tailwind-merge": "^3.4.0",
     "three": "^0.181.2",

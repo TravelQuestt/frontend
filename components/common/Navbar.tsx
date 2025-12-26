@@ -48,7 +48,7 @@ export default function Navbar() {
             transition={{ duration: 0.5, ease: "easeOut" }}
         >
             <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-                <Link href="/" className="text-xl font-bold flex items-center space-x-2">
+                <Link href="/dashboard" className="text-xl font-bold flex items-center space-x-2">
                     <span>🌍 TravelQuest</span>
                 </Link>
 
@@ -63,7 +63,8 @@ export default function Navbar() {
                                     className={`rounded-md ${isActive ? "bg-accent text-accent-foreground" : ""}`}
                                 >
                                     <Button variant={isActive ? "secondary" : "ghost"} className="flex gap-1 items-center">
-                                        {icon} {label}
+                                        {icon}
+                                        <span className="hidden lg:inline">{label}</span>
                                     </Button>
                                 </motion.div>
 

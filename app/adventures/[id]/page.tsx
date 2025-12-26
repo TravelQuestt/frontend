@@ -5,6 +5,7 @@ import AdventureMap from "@/components/adventures/AdventureMap";
 import DeleteAdventureDialog from "@/components/adventures/DeleteAdventureDialog";
 import UpdateAdventureDialog from "@/components/adventures/EditAdventureDialog";
 import { UploadImageDialog } from "@/components/adventures/UploadImageDialog";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Item, ItemContent, ItemDescription } from "@/components/ui/item";
@@ -179,6 +180,7 @@ export default function AdventureDetails() {
 
                 {/* Gallery */}
                 <motion.div layout>
+                    {imagesLoading && <LoadingSpinner label="Loading adventures...." />}
                     {images && id && <AdventureGallery images={images} deleting={deleting} adventureId={id} />}
                 </motion.div>
             </motion.div>

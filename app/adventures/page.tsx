@@ -16,6 +16,7 @@ import useAdventures from "@/hooks/adventures/useAdventures";
 import { AnimatePresence, motion } from "framer-motion";
 import { SlidersHorizontal } from "lucide-react";
 import Link from "next/link";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 
 export default function AdventuresPage() {
     const [page, setPage] = useState(0);
@@ -46,6 +47,8 @@ export default function AdventuresPage() {
         setSearchTerm(appliedFilters.searchTerm);
         setPage(0);
     };
+
+    if(isLoading) return <LoadingSpinner label="Loading adventures...."/>
 
     return (
         <div className="flex flex-col lg:flex-row bg-background min-h-screen text-foreground">
@@ -94,14 +97,15 @@ export default function AdventuresPage() {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4 }}
                 >
-                    <h1 className="text-2xl font-bold">My Adventures</h1>
-                    <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap text-sm">A timeline of places you’ve lived, not just visited.</p>
+                    <div>
+                        <h1 className="text-2xl font-bold">My Adventures</h1>
+                        <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap text-sm">A timeline of places you’ve lived, not just visited.</p>
+                    </div>
                 </motion.div>
 
                 <p className="hidden lg:block text-muted-foreground text-sm mb-6">
                     {adventures.length} result{adventures.length !== 1 && "s"}{searchTerm && ` matching "${searchTerm}"`}
                 </p>
-
 
                 {/* Adventures grid */}
                 <AnimatePresence mode="wait">

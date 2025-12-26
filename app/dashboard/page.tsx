@@ -1,6 +1,7 @@
 "use client"
 
 import AdventureCard from "@/components/common/adventures/AdventureCard";
+import LoadingSpinner from "@/components/common/LoadingSpinner";
 import useAdventures from "@/hooks/adventures/useAdventures";
 import { getStats } from "@/hooks/dashboard/getStats";
 import { getUser } from "@/hooks/user/getUser";
@@ -64,7 +65,7 @@ export default function Dashboard() {
                     </p>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {isLoading ? (
-                            <p>Loading adventures...</p>
+                            <LoadingSpinner label="Loading adventures...." />
                         ) : adventures.length === 0 ? (
                             <p>No adventures found.</p>
                         ) : (

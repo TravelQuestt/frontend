@@ -12,15 +12,16 @@ import useAdventure from "@/hooks/adventures/useAdventure";
 import useImages from "@/hooks/images/useImages";
 import { format } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
-import { MapPin, Star, UploadCloud } from "lucide-react";
+import { MapPin, Star, Trash2, UploadCloud } from "lucide-react";
 import { useParams } from "next/navigation";
+import { useState } from "react";
 
 export default function AdventureDetails() {
     const params = useParams();
     const id = params?.id ? Number(params.id) : undefined;
     const { data: adventure, isLoading: adventureLoading } = useAdventure(id);
     const { data: images, isLoading: imagesLoading } = useImages(id);
-    console.log(images)
+    const [deleting, setDeleteing] = useState(false);
     if (adventureLoading) return <div>loading</div>
     // make spinner for adventureLoading variable
     return (
@@ -130,16 +131,53 @@ export default function AdventureDetails() {
                 </Item>
             </div>
             {/* Gallery */}
-            <div className="flex justify-between">
-                <div>
-                    <h2 className="text-lg font-semibold">Gallery</h2>
-                    <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap text-sm">Moments and memories from this adventure.</p>
+            <motion.div layout className="space-y-4">
+                {/* Header + warning */}
+                <div className="flex justify-between">
+                    <div>
+                        <h2 className="text-lg font-semibold">Gallery</h2>
+                        <p className="text-muted-foreground text-sm pb-3">
+                            Moments and memories from this adventure.
+                        </p>
+
+                        <AnimatePresence>
+                            {deleting && (
+                                <motion.div
+                                    initial={{ opacity: 0, height: 0 }}
+                                    animate={{ opacity: 1, height: "auto" }}
+                                    exit={{ opacity: 0, height: 0 }}
+                                    transition={{ duration: 0.25, ease: "easeInOut" }}
+                                    className="overflow-hidden"
+                                >
+                                    <div className="flex items-center gap-2 rounded-md border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm text-red-600">
+                                        <Trash2 className="h-4 w-4" />
+                                        Click an image to permanently delete it
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
+
+                    <div className="flex gap-2">
+                        <Button
+                            variant={deleting ? "default" : "destructive"}
+                            className={`gap-2 ${deleting ? "bg-red-600 hover:bg-red-700" : ""}`}
+                            onClick={() => setDeleteing(!deleting)}
+                        >
+                            <Trash2 className="w-4 h-4" />
+                            {deleting ? "Delete mode ON" : "Delete images"}
+                        </Button>
+
+                        {adventure && <UploadImageDialog adventureId={adventure.id} />}
+                    </div>
                 </div>
-                {adventure && <UploadImageDialog adventureId={adventure?.id} />}
-            </div>
-            <div>
-                {images && <AdventureGallery images={images} />}
-            </div>
+
+                {/* Gallery */}
+                <motion.div layout>
+                    {images && id && <AdventureGallery images={images} deleting={deleting} adventureId={id} />}
+                </motion.div>
+            </motion.div>
+
         </motion.div >
     );
 }

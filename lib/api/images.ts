@@ -16,3 +16,8 @@ export async function uploadImages(id: number, images: File[]) {
     });
     return res.data;
 }
+
+export async function deleteImage(adventureId: number, imageId: number) {
+    const res = await axios.delete(`/images/${adventureId}/${imageId}`)
+    return res.data;
+}

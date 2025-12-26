@@ -3,6 +3,7 @@ import { fetchAllAdventures } from "@/lib/api/adventures";
 
 type UseMyAdventuresParams = {
   page: number;
+  size: number;
   searchTerm: string;
   filters: {
     orderBy: string;

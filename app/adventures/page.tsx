@@ -17,7 +17,6 @@ import { AnimatePresence, motion } from "framer-motion";
 import { SlidersHorizontal } from "lucide-react";
 import Link from "next/link";
 
-
 export default function AdventuresPage() {
     const [page, setPage] = useState(0);
     const [open, setOpen] = useState(false);
@@ -32,6 +31,7 @@ export default function AdventuresPage() {
         isLoading,
     } = useAdventures({
         page,
+        size: 6,
         searchTerm,
         filters,
     });
@@ -60,7 +60,10 @@ export default function AdventuresPage() {
             <main className="flex-1 p-4 sm:p-6">
                 {/* Mobile filter and title */}
                 <div className="flex items-center justify-between mb-6 lg:hidden">
-                    <h1 className="text-2xl font-bold">My Adventures</h1>
+                    <div>
+                        <h1 className="text-2xl font-bold">My Adventures</h1>
+                        <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap text-sm">A timeline of places you’ve lived, not just visited.</p>
+                    </div>
                     <Drawer open={open} onOpenChange={setOpen}>
                         <DrawerTrigger asChild>
                             <Button variant="outline" size="sm">

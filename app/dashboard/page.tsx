@@ -1,9 +1,9 @@
 "use client"
 
 import AdventureCard from "@/components/common/adventures/AdventureCard";
+import useAdventures from "@/hooks/adventures/useAdventures";
 import { getStats } from "@/hooks/dashboard/getStats";
 import { getUser } from "@/hooks/user/getUser";
-import { AdventureDTO } from "@/types/AdventureDTO";
 import { motion } from "framer-motion";
 import { Building2, Flag, MapPin, Plane, PlusCircle } from "lucide-react";
 import Link from "next/link";
@@ -11,78 +11,16 @@ import Link from "next/link";
 export default function Dashboard() {
     const { data: stats } = getStats();
     const { data: user } = getUser();
-    const loading = false;
-    const adventures: AdventureDTO[] = [
-        {
-            id: 4,
-            name: "Sahara Desert Camel Ride",
-            location: "Merzouga, Morocco",
-            tags: ["desert", "camel", "adventure"],
-            description: "Riding across golden dunes during a magical sunset.",
-            rating: 4.6,
-            publicVisibility: true,
-            latitude: 31.0994,
-            longitude: -4.0127,
-            createdAt: "2025-01-25T17:10:00Z",
-            updatedAt: "2025-01-30T22:00:00Z",
+    const { data: adventures = [], isLoading, } = useAdventures({
+        page: 0,
+        size: 3,
+        searchTerm: '',
+        filters: {
+            orderBy: "createdAt",
+            orderDirection: "desc",
+        },
+    });
 
-        },
-        {
-            id: 4,
-            name: "Sahara Desert Camel Ride",
-            location: "Merzouga, Morocco",
-            tags: ["desert", "camel", "adventure"],
-            description: "Riding across golden dunes during a magical sunset.",
-            rating: 4.6,
-            publicVisibility: true,
-            latitude: 31.0994,
-            longitude: -4.0127,
-            createdAt: "2025-01-25T17:10:00Z",
-            updatedAt: "2025-01-30T22:00:00Z",
-
-        },
-        {
-            id: 4,
-            name: "Sahara Desert Camel Ride",
-            location: "Merzouga, Morocco",
-            tags: ["desert", "camel", "adventure"],
-            description: "Riding across golden dunes during a magical sunset.",
-            rating: 4.6,
-            publicVisibility: true,
-            latitude: 31.0994,
-            longitude: -4.0127,
-            createdAt: "2025-01-25T17:10:00Z",
-            updatedAt: "2025-01-30T22:00:00Z",
-
-        },
-        {
-            id: 4,
-            name: "Sahara Desert Camel Ride",
-            location: "Merzouga, Morocco",
-            tags: ["desert", "camel", "adventure"],
-            description: "Riding across golden dunes during a magical sunset.",
-            rating: 4.6,
-            publicVisibility: true,
-            latitude: 31.0994,
-            longitude: -4.0127,
-            createdAt: "2025-01-25T17:10:00Z",
-            updatedAt: "2025-01-30T22:00:00Z",
-
-        },
-        {
-            id: 5,
-            name: "Northern Lights Hunt",
-            location: "Tromsø, Norway",
-            tags: ["aurora", "night", "sky"],
-            description: "Chasing the magical aurora borealis in the Arctic sky.",
-            rating: 5.0,
-            publicVisibility: true,
-            latitude: 69.6492,
-            longitude: 18.9553,
-            createdAt: "2025-01-30T22:00:00Z",
-            updatedAt: "2025-01-30T22:00:00Z",
-        },
-    ];
     return (
         <div className="min-h-screen bg-background text-foreground">
             <main className="px-4 sm:px-6 py-4 max-w-7xl mx-auto">
@@ -125,7 +63,7 @@ export default function Dashboard() {
                         Your newest adventures at a glance.
                     </p>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {loading ? (
+                        {isLoading ? (
                             <p>Loading adventures...</p>
                         ) : adventures.length === 0 ? (
                             <p>No adventures found.</p>

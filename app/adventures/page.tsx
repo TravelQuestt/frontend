@@ -17,6 +17,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { SlidersHorizontal } from "lucide-react";
 import Link from "next/link";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
+import ErrorState from "@/components/common/ErrorState";
 
 export default function AdventuresPage() {
     const [page, setPage] = useState(0);
@@ -30,6 +31,8 @@ export default function AdventuresPage() {
     const {
         data: adventures = [],
         isLoading,
+        isError,
+        error
     } = useAdventures({
         page,
         size: 6,
@@ -48,8 +51,8 @@ export default function AdventuresPage() {
         setPage(0);
     };
 
-    if(isLoading) return <LoadingSpinner label="Loading adventures...."/>
-
+    if (isLoading) return <LoadingSpinner label="Loading adventures...." />
+    if (isError) return <ErrorState error={error} />
     return (
         <div className="flex flex-col lg:flex-row bg-background min-h-screen text-foreground">
             <aside className="hidden lg:block lg:w-64">

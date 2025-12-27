@@ -6,6 +6,7 @@ import DeleteAdventureDialog from "@/components/adventures/DeleteAdventureDialog
 import UpdateAdventureDialog from "@/components/adventures/EditAdventureDialog";
 import { SelectCoverDialog } from "@/components/adventures/SelectorCoverDialog";
 import { UploadImageDialog } from "@/components/adventures/UploadImageDialog";
+import ErrorState from "@/components/common/ErrorState";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -21,12 +22,12 @@ import TimeAgo from 'react-timeago';
 export default function AdventureDetails() {
     const params = useParams();
     const id = params?.id ? Number(params.id) : undefined;
-    const { data: adventure, isLoading: adventureLoading } = useAdventure(id);
+    const { data: adventure, isLoading: adventureLoading, isError, error } = useAdventure(id);
     const { data: images, isLoading: imagesLoading } = useImages(id);
     const [deleting, setDeleteing] = useState(false);
 
     if (adventureLoading) return <LoadingSpinner label="Loading adventure...." />
-
+    if (isError) return <ErrorState error={error} />
     const MutedText = ({ children }: { children?: React.ReactNode }) => (
         <Badge
             variant="secondary"

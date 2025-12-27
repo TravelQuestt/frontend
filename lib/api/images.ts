@@ -21,3 +21,8 @@ export async function deleteImage(adventureId: number, imageId: number) {
     const res = await axios.delete(`/images/${adventureId}/${imageId}`)
     return res.data;
 }
+
+export async function setCover(adventureId: number, imageId: number) {
+    const res = await axios.put(`/images/${adventureId}/${imageId}/cover`)
+    return res.data;
+}

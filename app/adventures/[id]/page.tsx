@@ -4,6 +4,7 @@ import AdventureGallery from "@/components/adventures/AdventureGallery";
 import AdventureMap from "@/components/adventures/AdventureMap";
 import DeleteAdventureDialog from "@/components/adventures/DeleteAdventureDialog";
 import UpdateAdventureDialog from "@/components/adventures/EditAdventureDialog";
+import { SelectCoverDialog } from "@/components/adventures/SelectorCoverDialog";
 import { UploadImageDialog } from "@/components/adventures/UploadImageDialog";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import { Badge } from "@/components/ui/badge";
@@ -22,7 +23,6 @@ export default function AdventureDetails() {
     const id = params?.id ? Number(params.id) : undefined;
     const { data: adventure, isLoading: adventureLoading } = useAdventure(id);
     const { data: images, isLoading: imagesLoading } = useImages(id);
-    console.log(images)
     const [deleting, setDeleteing] = useState(false);
     if (adventureLoading) return <div>loading</div>
     const MutedText = ({ children }: { children?: React.ReactNode }) => (
@@ -67,7 +67,10 @@ export default function AdventureDetails() {
                     </Button>
                     {/* Delete Button */}
                     {id && <DeleteAdventureDialog adventureId={id} />} {/* FIX ME */}
-                    {id && adventure && <UpdateAdventureDialog adventureId={id} defaultValues={adventure} />} {/* FIX ME */}
+                    {id && adventure && <UpdateAdventureDialog adventureId={id} defaultValues={adventure} />}
+                    {images && adventure && id && <SelectCoverDialog images={images} adventureId={id} currentCoverUrl={adventure.coverImageUrl} />}
+
+                    {/* FIX ME */}
 
                 </div>
             </div>
@@ -165,6 +168,7 @@ export default function AdventureDetails() {
                     </div>
 
                     <div className="flex gap-2">
+
                         <Button
                             variant={deleting ? "default" : "destructive"}
                             className={`gap-2 ${deleting ? "bg-red-600 hover:bg-red-700" : ""}`}
@@ -177,10 +181,9 @@ export default function AdventureDetails() {
                         {adventure && <UploadImageDialog adventureId={adventure.id} />}
                     </div>
                 </div>
-
                 {/* Gallery */}
                 <motion.div layout>
-                    {imagesLoading && <LoadingSpinner label="Loading adventures...." />}
+                    {imagesLoading && <LoadingSpinner label="Loading images...." />}
                     {images && id && <AdventureGallery images={images} deleting={deleting} adventureId={id} />}
                 </motion.div>
             </motion.div>

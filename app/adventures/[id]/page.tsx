@@ -24,7 +24,9 @@ export default function AdventureDetails() {
     const { data: adventure, isLoading: adventureLoading } = useAdventure(id);
     const { data: images, isLoading: imagesLoading } = useImages(id);
     const [deleting, setDeleteing] = useState(false);
-    if (adventureLoading) return <div>loading</div>
+
+    if (adventureLoading) return <LoadingSpinner label="Loading adventure...." />
+
     const MutedText = ({ children }: { children?: React.ReactNode }) => (
         <Badge
             variant="secondary"

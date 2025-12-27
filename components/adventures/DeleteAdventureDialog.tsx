@@ -14,7 +14,6 @@ export default function DeleteAdventureDialog({
     const deleteAdventure = useDeleteAdventure();
     const [isDeleting, setIsDeleting] = useState(false);
 
-    // Delete function
     const handleDelete = async () => {
         if (!adventureId) return;
         setIsDeleting(true);
@@ -27,9 +26,10 @@ export default function DeleteAdventureDialog({
     return <>
         <AlertDialog>
             <AlertDialogTrigger asChild>
-                <Button variant="destructive" className="gap-1">
-                    <Trash2 className="w-4 h-4" />
-                </Button>
+                <button className="rounded-md border px-3 py-1 text-sm flex items-center gap-1 bg-red-700 hover:bg-red-500"
+                >
+                    <Trash2 className="w-4 h-4 " />
+                </button>
             </AlertDialogTrigger>
 
             <AlertDialogContent className="w-[90%] max-w-md rounded-lg p-6">
@@ -53,6 +53,6 @@ export default function DeleteAdventureDialog({
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>
-        </AlertDialog>
+        </AlertDialog >
     </>
 }

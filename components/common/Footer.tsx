@@ -37,7 +37,7 @@ export default function Footer() {
                     <span className="text-sm text-muted-foreground">Follow us</span>
                     <div className="flex items-center space-x-4">
                         <Link
-                            href="https://github.com/resist15/TravelQuest"
+                            href="https://github.com/TravelQuestt"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="hover:text-primary transition-colors"

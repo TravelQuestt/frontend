@@ -13,7 +13,7 @@ import { Item, ItemContent, ItemDescription } from "@/components/ui/item";
 import useAdventure from "@/hooks/adventures/useAdventure";
 import useImages from "@/hooks/images/useImages";
 import { AnimatePresence, motion } from "framer-motion";
-import { Clock, MapPin, Star, Trash2 } from "lucide-react";
+import { BadgeCheckIcon, Clock, MapPin, Star, Trash2 } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import TimeAgo from 'react-timeago';
@@ -88,23 +88,33 @@ export default function AdventureDetails() {
                 <div className="flex items-center gap-3 text-muted-foreground">
                     <MapPin className="w-4 h-4" /> {adventure?.location}
                 </div>
-                <div>{adventure?.publicVisibility}</div>
-                <div className="flex gap-1">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                        <button
-                            key={star}
-                            type="button"
-                            className="focus:outline-none"
-                            aria-label={`Rate ${star} star`}
-                        >
-                            <Star
-                                className={`h-6 w-6 transition ${star <= (adventure?.rating ?? 0)
-                                    ? "fill-yellow-400 text-yellow-400"
-                                    : "text-muted-foreground"
-                                    }`}
-                            />
-                        </button>
-                    ))}
+
+
+                <div className="flex gap-3">
+                    <Badge
+                        variant="secondary"
+                        className={`${adventure?.publicVisibility ? "bg-green-500 dark:bg-green-500 text-black" : "bg-blue-500 dark:bg-blue-500 text-white"}`}
+                    >
+                        <BadgeCheckIcon />
+                        {adventure?.publicVisibility ? "Public" : "Private"}
+                    </Badge>
+                    <div className="flex gap-1">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                            <button
+                                key={star}
+                                type="button"
+                                className="focus:outline-none"
+                                aria-label={`Rate ${star} star`}
+                            >
+                                <Star
+                                    className={`h-6 w-6 transition ${star <= (adventure?.rating ?? 0)
+                                        ? "fill-yellow-400 text-yellow-400"
+                                        : "text-muted-foreground"
+                                        }`}
+                                />
+                            </button>
+                        ))}
+                    </div>
                 </div>
             </div>
             {/* Tags */}

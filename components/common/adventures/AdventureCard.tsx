@@ -1,64 +1,84 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { AdventureDTO } from "@/types/AdventureDTO";
-import { Star } from "lucide-react";
+import { Star, MapPin, BadgeCheckIcon } from "lucide-react";
 import Image from "next/image";
 
 type AdventureCardProps = {
-  adventure: AdventureDTO;
+    adventure: AdventureDTO;
 };
 
 export default function AdventureCard({ adventure }: AdventureCardProps) {
+    const coverImageUrl =
+        adventure.coverImageUrl?.length > 0
+            ? adventure.coverImageUrl
+            : "/adventure_place.webp";
 
-  const coverImageUrl =
-    adventure.coverImageUrl && adventure.coverImageUrl.length > 0
-      ? adventure.coverImageUrl
-      : "/adventure_place.webp";
+    return (
+        <div className="group relative rounded-xl overflow-hidden bg-card transition-all duration-300 hover:shadow-lg">
+            {/* IMAGE WRAPPER - Changed to 16:10 for a sleeker, less "tall" look */}
+            <div className="relative aspect-[16/10] w-full overflow-hidden">
+                <Image
+                    src={coverImageUrl}
+                    alt={adventure.name}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 33vw"
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                />
 
-  return (
-    <div className="bg-card rounded-lg shadow-sm overflow-hidden h-full flex flex-col">
-      {/* Check if a valid image URL exists */}
-      {coverImageUrl || coverImageUrl == "/adventure_place.webp" ? (
-        <Image
-          src={coverImageUrl}
-          alt={adventure.name}
-          width={600}
-          height={200}
-          className="w-full h-40 object-cover"
-          priority
-        />
-      ) : (
-        <div className="h-40 bg-gradient-to-r from-green-400 to-blue-400 flex items-center justify-center text-sm text-white">
-          No image found
+                {/* TOP BADGES */}
+                <div className="absolute top-2 left-2 right-2 flex justify-between items-start pointer-events-none">
+                    {/* TAGS - Minimalist style */}
+                    <div className="flex gap-1">
+                        {/* {adventure.tags?.slice(0, 1).map((tag, idx) => (
+                            <span key={idx} className="bg-black/50 backdrop-blur-md text-white text-[10px] px-2 py-0.5 rounded-md border border-white/10 uppercase font-semibold tracking-wider">
+                                {tag}
+                            </span>
+                        ))} */}
+                        <Badge
+                            variant="secondary"
+                            className={`${adventure?.publicVisibility ? "bg-green-500 dark:bg-green-500 text-black" : "bg-blue-500 dark:bg-blue-500 text-white"}`}
+                        >
+                            <BadgeCheckIcon />
+                            {adventure?.publicVisibility ? "Public" : "Private"}
+                        </Badge>
+                    </div>
+
+                    {/* RATING */}
+                    {typeof adventure.rating === "number" && (
+                        <div className="flex items-center gap-1 rounded-md bg-white/90 dark:bg-black/60 backdrop-blur-sm px-1.5 py-0.5 text-[11px] font-bold shadow-sm">
+                            <Star className="h-3 w-3 fill-yellow-500 text-yellow-500" />
+                            <span>{adventure.rating.toFixed(1)}</span>
+                        </div>
+                    )}
+                </div>
+
+                {/* BOTTOM CONTENT OVERLAY - Gradient is more subtle now */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-3">
+
+                    <div className="flex justify-between items-center">
+                        <div className="translate-y-1 group-hover:translate-y-0 transition-transform duration-300 ml-2 mb-2">
+                            <h3 className="text-sm md:text-base font-bold text-white leading-tight line-clamp-1">
+                                {adventure.name}
+                            </h3>
+
+                            <div className="flex items-center gap-1 text-white/80 text-[11px] mt-1">
+                                <MapPin className="h-3 w-3 shrink-0" />
+                                <span className="truncate">{adventure.location}</span>
+                            </div>
+                        </div>
+
+                        <div className="flex gap-1 self-end mb-1">
+                            {adventure.tags?.slice(0, 2).map((tag, idx) => (
+                                <span key={idx} className=" backdrop-blur-md text-white text-[10px] px-2 py-0.5 rounded-md border border-white/10 uppercase font-semibold tracking-wider">
+                                    {tag}
+                                </span>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      )}
-      <div className="p-4 space-y-2 flex-grow">
-        <h3 className="text-lg font-semibold">{adventure.name}</h3>
-        <div className="flex flex-wrap gap-1 text-xs mb-3">
-          {adventure.tags.map((tag: string, idx: number) => (
-            <span key={idx} className="px-2 py-0.5 rounded-full bg-secondary">
-              {tag}
-            </span>
-          ))}
-        </div>
-        {typeof adventure.rating === "number" && (
-          <div className="flex items-center gap-1 text-yellow-500 text-sm">
-            {[...Array(5)].map((_, i) =>
-              i < Math.floor(adventure.rating) ? (
-                <Star key={i} className="fill-yellow-500 text-yellow-500 w-4 h-4" />
-              ) : (
-                <Star key={i} className="text-yellow-500 w-4 h-4" />
-              )
-            )}
-            {/* <span className="text-muted-foreground ml-1">
-              ({adventure.rating.toFixed(1)})
-            </span> */}
-          </div>
-        )}
-
-        {/* Display the fetched location name */}
-        <p className="text-muted-foreground text-sm">📍 {adventure.location}</p>
-      </div>
-    </div>
-  );
+    );
 }

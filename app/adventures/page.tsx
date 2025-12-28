@@ -104,6 +104,14 @@ export default function AdventuresPage() {
                         <h1 className="text-2xl font-bold">My Adventures</h1>
                         <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap text-sm">A timeline of places you’ve lived, not just visited.</p>
                     </div>
+
+
+                    {/* Static Add button for desktop */}
+                    <div className="hidden lg:flex justify-end p-4">
+                        <Link href="/adventures/new" passHref>
+                            <Button>+ Add Adventure</Button>
+                        </Link>
+                    </div>
                 </motion.div>
 
                 <p className="hidden lg:block text-muted-foreground text-sm mb-6">
@@ -187,13 +195,6 @@ export default function AdventuresPage() {
                     <Button className="h-12 px-6 text-base shadow-lg">+ Add Adventure</Button>
                 </Link>
             </motion.div>
-
-            {/* Static Add button for desktop */}
-            <div className="hidden lg:flex justify-end p-4">
-                <Link href="/adventures/new" passHref>
-                    <Button>+ Add Adventure</Button>
-                </Link>
-            </div>
         </div>
     );
 }

@@ -38,3 +38,7 @@ export async function deleteAdventure(id: number): Promise<void> {
 export async function updateAdventure(id:number, adventure: AdventurePayload){
     await axios.put(`/adventures/${id}`,adventure);
 }
+
+export async function createAdventure(adventure: AdventurePayload){
+    await axios.post("/adventures",adventure)
+}

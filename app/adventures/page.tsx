@@ -18,6 +18,7 @@ import { SlidersHorizontal } from "lucide-react";
 import Link from "next/link";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import ErrorState from "@/components/common/ErrorState";
+import CreateAdventureDialog from "@/components/adventures/CreateAdventureDialog";
 
 export default function AdventuresPage() {
     const [page, setPage] = useState(0);
@@ -108,9 +109,7 @@ export default function AdventuresPage() {
 
                     {/* Static Add button for desktop */}
                     <div className="hidden lg:flex justify-end p-4">
-                        <Link href="/adventures/new" passHref>
-                            <Button>+ Add Adventure</Button>
-                        </Link>
+                        <CreateAdventureDialog />
                     </div>
                 </motion.div>
 
@@ -194,6 +193,8 @@ export default function AdventuresPage() {
                 <Link href="/adventures/new" passHref>
                     <Button className="h-12 px-6 text-base shadow-lg">+ Add Adventure</Button>
                 </Link>
+                <CreateAdventureDialog />
+
             </motion.div>
         </div>
     );

@@ -11,17 +11,17 @@ type UseMyAdventuresParams = {
   };
 };
 
-export default function useAdventures({
+export default function useRecentAdventures({
   page,
   searchTerm,
   filters,
-  size,
+  size
 }: UseMyAdventuresParams) {
   return useQuery({
     queryKey: [
-      "adventures",
-      page,
+      "recent-adventures",
       size,
+      page,
       searchTerm,
       filters.orderBy,
       filters.orderDirection,
@@ -29,6 +29,7 @@ export default function useAdventures({
     queryFn: () =>
       fetchAllAdventures({
         page,
+        size,
         searchTerm,
         sortBy: filters.orderBy,
         order: filters.orderDirection,

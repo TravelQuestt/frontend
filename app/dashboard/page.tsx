@@ -3,6 +3,7 @@
 import AdventureCard from "@/components/common/adventures/AdventureCard";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
 import useAdventures from "@/hooks/adventures/useAdventures";
+import useRecentAdventures from "@/hooks/adventures/useRecentAdventures";
 import { getStats } from "@/hooks/dashboard/getStats";
 import { getUser } from "@/hooks/user/getUser";
 import { motion } from "framer-motion";
@@ -12,7 +13,7 @@ import Link from "next/link";
 export default function Dashboard() {
     const { data: stats } = getStats();
     const { data: user } = getUser();
-    const { data: adventures = [], isLoading, } = useAdventures({
+    const { data: adventures = [], isLoading, } = useRecentAdventures({
         page: 0,
         size: 3,
         searchTerm: '',

@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { AdventureDTO } from "@/types/AdventureDTO";
 import { Star, MapPin, BadgeCheckIcon } from "lucide-react";
 import Image from "next/image";
+import fallbackImage from "@/public/adventure_place.webp";
 
 type AdventureCardProps = {
     adventure: AdventureDTO;
@@ -13,7 +14,7 @@ export default function AdventureCard({ adventure }: AdventureCardProps) {
     const coverImageUrl =
         adventure.coverImageUrl?.length > 0
             ? adventure.coverImageUrl
-            : "/adventure_place.webp";
+            : fallbackImage;
 
     return (
         <div className="group relative rounded-xl overflow-hidden bg-card transition-all duration-300 hover:shadow-lg">

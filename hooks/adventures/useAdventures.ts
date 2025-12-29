@@ -30,6 +30,7 @@ export default function useAdventures({
       fetchAllAdventures({
         page,
         searchTerm,
+        size,
         sortBy: filters.orderBy,
         order: filters.orderDirection,
       }),

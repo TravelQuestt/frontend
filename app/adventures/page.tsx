@@ -36,7 +36,7 @@ export default function AdventuresPage() {
         error
     } = useAdventures({
         page,
-        size: 6,
+        size: 9,
         searchTerm,
         filters,
     });
@@ -176,7 +176,7 @@ export default function AdventuresPage() {
                         variant="outline"
                         size="sm"
                         onClick={() => setPage((prev) => prev + 1)}
-                        disabled={adventures.length < 6}
+                        disabled={adventures.length < 9}
                     >
                         Next
                     </Button>

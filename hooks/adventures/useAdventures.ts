@@ -8,6 +8,7 @@ type UseMyAdventuresParams = {
   filters: {
     orderBy: string;
     orderDirection: string;
+    privacy: string;
   };
 };
 
@@ -25,6 +26,7 @@ export default function useAdventures({
       searchTerm,
       filters.orderBy,
       filters.orderDirection,
+      filters.privacy
     ],
     queryFn: () =>
       fetchAllAdventures({
@@ -33,6 +35,7 @@ export default function useAdventures({
         size,
         sortBy: filters.orderBy,
         order: filters.orderDirection,
+        privacy: filters.privacy
       }),
     staleTime: 30_000,
   });

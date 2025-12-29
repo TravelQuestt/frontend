@@ -8,6 +8,7 @@ export type FetchMyAdventuresParams = {
     searchTerm?: string;
     sortBy: string;
     order: string;
+    privacy: string;
 };
 
 export async function fetchAllAdventures(
@@ -20,6 +21,7 @@ export async function fetchAllAdventures(
             searchTerm: params.searchTerm || undefined,
             sortBy: params.sortBy,
             order: params.order,
+            privacy: params.privacy
         },
     });
 
@@ -35,10 +37,10 @@ export async function deleteAdventure(id: number): Promise<void> {
     await axios.delete(`/adventures/${id}`);
 }
 
-export async function updateAdventure(id:number, adventure: AdventurePayload){
-    await axios.put(`/adventures/${id}`,adventure);
+export async function updateAdventure(id: number, adventure: AdventurePayload) {
+    await axios.put(`/adventures/${id}`, adventure);
 }
 
-export async function createAdventure(adventure: AdventurePayload){
-    await axios.post("/adventures",adventure)
+export async function createAdventure(adventure: AdventurePayload) {
+    await axios.post("/adventures", adventure)
 }

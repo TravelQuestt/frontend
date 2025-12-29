@@ -56,7 +56,7 @@ export default function AdventureCard({ adventure }: AdventureCardProps) {
                 </div>
 
                 {/* BOTTOM CONTENT OVERLAY - Gradient is more subtle now */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-3">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-3 -bottom-px -inset-x-px">
 
                     <div className="flex justify-between items-center">
                         <div className="translate-y-1 group-hover:translate-y-0 transition-transform duration-300 ml-2 mb-2">

@@ -19,26 +19,28 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import TimeAgo from 'react-timeago';
 
+const MutedText = ({ children }: { children?: React.ReactNode }) => (
+    <Badge
+        variant="secondary"
+        className="flex items-center gap-1 px-2 py-1 text-xs font-normal mt-3"
+    >
+        <Clock className="h-3 w-3 opacity-70" />
+        <span className="opacity-80">Updated</span>
+        <span className="font-medium">{children}</span>
+    </Badge>
+);
+
 export default function AdventureDetails() {
     const params = useParams();
     const id = params?.id ? Number(params.id) : undefined;
     const { data: adventure, isLoading: adventureLoading, isError, error } = useAdventure(id);
-    const { data: images, isLoading: imagesLoading } = useImages(id);
+    const { data: images = [], isLoading: imagesLoading } = useImages(id);
     const [deleting, setDeleteing] = useState(false);
 
     if (adventureLoading) return <LoadingSpinner label="Loading adventure...." />
     if (isError) return <ErrorState error={error} />
-    const MutedText = ({ children }: { children?: React.ReactNode }) => (
-        <Badge
-            variant="secondary"
-            className="flex items-center gap-1 px-2 py-1 text-xs font-normal mt-3"
-        >
-            <Clock className="h-3 w-3 opacity-70" />
-            <span className="opacity-80">Updated</span>
-            <span className="font-medium">{children}</span>
-        </Badge>
-    );
-    // make spinner for adventureLoading variable
+    if (!id || !adventure) { return null }
+
     return (
         <motion.div
             className="p-6 space-y-6 max-w-5xl mx-auto"
@@ -48,8 +50,8 @@ export default function AdventureDetails() {
         >
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
                 <div>
-                    <h1 className="text-4xl font-bold text-primary mb-1">✈️ {adventure?.name}</h1>
-                    {adventure?.updatedAt && (
+                    <h1 className="text-4xl font-bold text-primary mb-1">✈️ {adventure.name}</h1>
+                    {adventure.updatedAt && (
                         <TimeAgo date={adventure.updatedAt} component={MutedText} />
                     )}
                 </div>
@@ -60,7 +62,7 @@ export default function AdventureDetails() {
                         variant="outline"
                         onClick={() =>
                             window.open(
-                                `https://www.google.com/maps?q=${adventure?.latitude},${adventure?.longitude}`,
+                                `https://www.google.com/maps?q=${adventure.latitude},${adventure.longitude}`,
                                 "_blank"
                             )
                         }
@@ -68,12 +70,10 @@ export default function AdventureDetails() {
                     >
                         <MapPin className="w-4 h-4" /> Google Maps
                     </Button>
-                    {/* Delete Button */}
-                    {id && <DeleteAdventureDialog adventureId={id} />} {/* FIX ME */}
-                    {id && adventure && <UpdateAdventureDialog adventureId={id} defaultValues={adventure} />}
-                    {images && adventure && id && <SelectCoverDialog images={images} adventureId={id} currentCoverUrl={adventure.coverImageUrl} />}
 
-                    {/* FIX ME */}
+                    <DeleteAdventureDialog adventureId={id} />
+                    <UpdateAdventureDialog adventureId={id} defaultValues={adventure} />
+                    <SelectCoverDialog images={images} adventureId={id} currentCoverUrl={adventure.coverImageUrl} />
 
                 </div>
             </div>
@@ -83,21 +83,21 @@ export default function AdventureDetails() {
                 transition={{ delay: 0.1, duration: 0.5 }}
                 className="w-full rounded-lg overflow-hidden shadow-md"
             >
-                {adventure && <AdventureMap coordinates={[adventure?.longitude, adventure?.latitude]} />}
+                <AdventureMap coordinates={[adventure.longitude, adventure.latitude]} />
             </motion.div>
             <div className="flex justify-between">
                 <div className="flex items-center gap-3 text-muted-foreground">
-                    <MapPin className="w-4 h-4" /> {adventure?.location}
+                    <MapPin className="w-4 h-4" /> {adventure.location}
                 </div>
 
 
                 <div className="flex gap-3">
                     <Badge
                         variant="secondary"
-                        className={`${adventure?.publicVisibility ? "bg-green-500 dark:bg-green-500 text-black" : "bg-blue-500 dark:bg-blue-500 text-white"}`}
+                        className={`${adventure.publicVisibility ? "bg-green-500 dark:bg-green-500 text-black" : "bg-blue-500 dark:bg-blue-500 text-white"}`}
                     >
                         <BadgeCheckIcon />
-                        {adventure?.publicVisibility ? "Public" : "Private"}
+                        {adventure.publicVisibility ? "Public" : "Private"}
                     </Badge>
                     <div className="flex gap-1">
                         {[1, 2, 3, 4, 5].map((star) => (
@@ -108,7 +108,7 @@ export default function AdventureDetails() {
                                 aria-label={`Rate ${star} star`}
                             >
                                 <Star
-                                    className={`h-6 w-6 transition ${star <= (adventure?.rating ?? 0)
+                                    className={`h-6 w-6 transition ${star <= (adventure.rating ?? 0)
                                         ? "fill-yellow-400 text-yellow-400"
                                         : "text-muted-foreground"
                                         }`}
@@ -124,7 +124,7 @@ export default function AdventureDetails() {
                 <h2 className="text-lg font-semibold mb-2">Tags</h2>
                 <div className="flex gap-2">
                     <AnimatePresence>
-                        {adventure?.tags.map(tag => (
+                        {adventure.tags.map(tag => (
                             <motion.div
                                 key={tag}
                                 initial={{ opacity: 0, scale: 0.8 }}
@@ -143,11 +143,11 @@ export default function AdventureDetails() {
             {/* Description */}
             <div className="py-4">
                 <h2 className="text-lg font-semibold mb-2">Description</h2>
-                {/* <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{adventure?.description}</p> */}
+                {/* <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">{adventure.description}</p> */}
                 <Item variant="outline">
                     <ItemContent>
                         <ItemDescription>
-                            {adventure?.description}
+                            {adventure.description}
                         </ItemDescription>
                     </ItemContent>
                 </Item>
@@ -191,13 +191,12 @@ export default function AdventureDetails() {
                             {deleting ? "Delete mode ON" : "Delete images"}
                         </Button>
 
-                        {adventure && <UploadImageDialog adventureId={adventure.id} />}
+                        <UploadImageDialog adventureId={adventure.id} />
                     </div>
                 </div>
                 {/* Gallery */}
                 <motion.div layout>
-                    {imagesLoading && <LoadingSpinner label="Loading images...." />}
-                    {images && id && <AdventureGallery images={images} deleting={deleting} adventureId={id} />}
+                    {imagesLoading ? <LoadingSpinner label="Loading images...." /> : <AdventureGallery images={images} deleting={deleting} adventureId={id} />}
                 </motion.div>
             </motion.div>
 

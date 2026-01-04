@@ -9,7 +9,6 @@ export const RegisterSchema = z.object({
     .regex(/[A-Z]/, "Password must contain an uppercase letter")
     .regex(/[0-9]/, "Password must contain a number")
     .regex(/[!@#$%^&*(),.?":{}|<>]/, "Password must contain a special character"),
-  role: z.string()
 });
 
 export type RegisterInput = z.infer<typeof RegisterSchema>;

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const PUBLIC_ROUTES = ["/login", "/register", "/forgot-password"];
+const PUBLIC_ROUTES = ["/login", "/register", "/auth/callback"];
 
 export function proxy(req: NextRequest) {
   const token = req.cookies.get("auth_token")?.value;

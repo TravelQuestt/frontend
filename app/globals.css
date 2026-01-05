@@ -112,10 +112,20 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+.dark .maplibregl-popup-content {
+  background: #020617;
+  color: #e5e7eb;
+}
+
+.dark .maplibregl-popup-tip {
+  border-top-color: #020617;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }

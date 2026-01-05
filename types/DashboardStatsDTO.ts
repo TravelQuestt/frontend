@@ -3,4 +3,5 @@ export interface DashboardStatsDTO {
     totalCountries: number,
     totalRegions: number,
     totalCities: number,
+    averageRating: number,
 }

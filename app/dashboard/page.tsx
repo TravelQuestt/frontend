@@ -2,7 +2,8 @@
 
 import AdventureCard from "@/components/common/adventures/AdventureCard";
 import LoadingSpinner from "@/components/common/LoadingSpinner";
-import useAdventures from "@/hooks/adventures/useAdventures";
+import AdventureTimeline from "@/components/dashboard/AdventureTimeline";
+import StatCard from "@/components/dashboard/StatCard";
 import useRecentAdventures from "@/hooks/adventures/useRecentAdventures";
 import { getStats } from "@/hooks/dashboard/getStats";
 import { getUser } from "@/hooks/user/getUser";
@@ -11,6 +12,13 @@ import { Building2, Flag, MapPin, Plane, PlusCircle } from "lucide-react";
 import Link from "next/link";
 
 export default function Dashboard() {
+    const mockData = [
+        { month: "Jan", count: 2 },
+        { month: "Feb", count: 5 },
+        { month: "Mar", count: 3 },
+        { month: "Apr", count: 7 },
+        { month: "May", count: 4 },
+    ];
     const { data: stats } = getStats();
     const { data: user } = getUser();
     const { data: adventures = [], isLoading, } = useRecentAdventures({
@@ -26,38 +34,54 @@ export default function Dashboard() {
     return (
         <div className="min-h-screen bg-background text-foreground">
             <main className="px-4 sm:px-6 py-4 max-w-7xl mx-auto">
-                <h1 className="text-4xl sm:text-5xl font-semibold mb-2">Welcome, {user?.name}!</h1>
-                <p className="text-muted-foreground mt-1 mb-8">
-                    Your gateway to memories, moments, and mapped milestones.
-                </p>
-                {/* Stats */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                    <div className="bg-muted rounded-xl p-4 flex flex-col justify-center">
-                        <p className="text-3xl font-bold text-pink-500">{stats?.totalAdventures}</p>
-                        <div className="flex items-center gap-2 text-base mt-1">
-                            <Plane className="w-4 h-4 text-pink-500" /> Total Adventures
-                        </div>
-                    </div>
-                    <div className="bg-muted rounded-xl p-4 flex flex-col justify-center">
-                        <p className="text-3xl font-bold text-blue-500">{stats?.totalCountries}</p>
-                        <div className="flex items-center gap-2 text-base mt-1">
-                            <Flag className="w-4 h-4 text-blue-500" /> Countries Visited
-                        </div>
-                    </div>
-                    <div className="bg-muted rounded-xl p-4 flex flex-col justify-center">
-                        <p className="text-3xl font-bold text-green-500">{stats?.totalRegions}</p>
-                        <div className="flex items-center gap-2 text-base mt-1">
-                            <MapPin className="w-4 h-4 text-green-500" /> Total Visited Regions
-                        </div>
-                    </div>
-                    <div className="bg-muted rounded-xl p-4 flex flex-col justify-center">
-                        <p className="text-3xl font-bold text-cyan-500">{stats?.totalCities}</p>
-                        <div className="flex items-center gap-2 text-base mt-1">
-                            <Building2 className="w-4 h-4 text-cyan-500" /> Total Visited Cities
-                        </div>
-                    </div>
+                <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6 }}
+                    className="relative mb-10 rounded-3xl p-6 bg-gradient-to-br 
+             from-white/10 to-white/5 dark:from-white/5 dark:to-white/0
+             backdrop-blur-xl"
+                >
+                    <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight">
+                        Welcome, {user?.name}
+                    </h1>
+                    <p className="text-muted-foreground mt-2 max-w-xl">
+                        Your gateway to memories, moments, and mapped milestones.
+                    </p>
+                </motion.div>
+
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+                    <StatCard
+                        label="Total Adventures"
+                        value={stats?.totalAdventures}
+                        icon={Plane}
+                        color="text-pink-400"
+                    />
+
+                    <StatCard
+                        label="Countries Visited"
+                        value={stats?.totalCountries}
+                        icon={Flag}
+                        color="text-blue-400"
+                    />
+
+                    <StatCard
+                        label="Regions Explored"
+                        value={stats?.totalRegions}
+                        icon={MapPin}
+                        color="text-green-400"
+                    />
+
+                    <StatCard
+                        label="Cities Visited"
+                        value={stats?.totalCities}
+                        icon={Building2}
+                        color="text-cyan-400"
+                    />
                 </div>
 
+                <AdventureTimeline data={mockData} />
                 {/* Adventures */}
                 <section className="mb-12">
                     <h2 className="text-2xl font-semibold">Recent Adventures</h2>

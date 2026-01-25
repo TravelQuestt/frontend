@@ -23,6 +23,7 @@ export default function Dashboard() {
         filters: {
             orderBy: "createdAt",
             orderDirection: "desc",
+            privacy: "all",
         },
     });
 

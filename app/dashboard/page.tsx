@@ -5,20 +5,15 @@ import LoadingSpinner from "@/components/common/LoadingSpinner";
 import AdventureTimeline from "@/components/dashboard/AdventureTimeline";
 import StatCard from "@/components/dashboard/StatCard";
 import useRecentAdventures from "@/hooks/adventures/useRecentAdventures";
+import { getGraph } from "@/hooks/dashboard/getGraph";
 import { getStats } from "@/hooks/dashboard/getStats";
 import { getUser } from "@/hooks/user/getUser";
 import { motion } from "framer-motion";
-import { Building2, Flag, MapPin, Plane, PlusCircle } from "lucide-react";
+import { Building2, CircleArrowRight, Flag, MapPin, Plane } from "lucide-react";
 import Link from "next/link";
 
 export default function Dashboard() {
-    const mockData = [
-        { month: "Jan", count: 2 },
-        { month: "Feb", count: 5 },
-        { month: "Mar", count: 3 },
-        { month: "Apr", count: 7 },
-        { month: "May", count: 4 },
-    ];
+    const { data: graph = [] } = getGraph();
     const { data: stats } = getStats();
     const { data: user } = getUser();
     const { data: adventures = [], isLoading, } = useRecentAdventures({
@@ -81,7 +76,7 @@ export default function Dashboard() {
                     />
                 </div>
 
-                <AdventureTimeline data={mockData} />
+                <AdventureTimeline data={graph} />
                 {/* Adventures */}
                 <section className="mb-12">
                     <h2 className="text-2xl font-semibold">Recent Adventures</h2>
@@ -124,15 +119,15 @@ export default function Dashboard() {
                     transition={{ duration: 0.6 }}
                     className="flex items-center gap-6 justify-start p-4"
                 >
-                    <Link href="/adventures/new">
+                    <Link href="/adventures">
                         <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.97 }}
                             className="relative flex items-center gap-2 px-6 py-3 text-background text-lg font-medium rounded-xl bg-foreground shadow-lg hover:shadow-xl transition-all duration-300"
                         >
                             <span className="absolute -inset-1 z-0 rounded-xl opacity-20 blur-md animate-pulse" />
-                            <PlusCircle className="w-5 h-5 z-10" />
-                            <span className="z-10">Add Adventure</span>
+                            <CircleArrowRight className="w-5 h-5 z-10" />
+                            <span className="z-10">Move to Adventures</span>
                         </motion.button>
                     </Link>
 

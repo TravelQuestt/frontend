@@ -12,7 +12,8 @@ import {
     ReferenceLine,
 } from "recharts";
 
-export default function AdventureTimeline({ data }: { data: DashboardGraphDTO[] }) {
+
+export default function AdventureTimeline({ data }: Readonly<{ data: DashboardGraphDTO[] }>) {
     const availableYears = useMemo(() => {
         if (!data || data.length === 0) return [new Date().getFullYear()];
         const years = Array.from(new Set(data.map((d) => d.year)));
@@ -101,7 +102,8 @@ export default function AdventureTimeline({ data }: { data: DashboardGraphDTO[] 
 
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-purple-500/10 border border-purple-500/20 text-[11px] font-semibold text-purple-300 tracking-wide uppercase">
                         <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
-                        Total: <span className="text-white ml-1">{totalAdventures}</span>
+                        Total:{' '}
+                        <span className="text-white">{totalAdventures}</span>
                     </div>
                 </div>
             </div>

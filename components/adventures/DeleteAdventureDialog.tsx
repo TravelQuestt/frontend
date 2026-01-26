@@ -26,7 +26,7 @@ export default function DeleteAdventureDialog({
     return <>
         <AlertDialog>
             <AlertDialogTrigger asChild>
-                <button className="rounded-md border px-3 py-1 text-sm flex items-center gap-1 bg-red-700 hover:bg-red-500"
+                <button className="rounded-md text-white border px-3 py-1 text-sm flex items-center gap-1 bg-red-700 hover:bg-red-500"
                 >
                     <Trash2 className="w-4 h-4 " />
                 </button>

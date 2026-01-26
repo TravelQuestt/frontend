@@ -126,7 +126,7 @@ export function UploadImageDialog({ adventureId }: Props) {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="default">
+                <Button variant="default" className="">
                     <Upload className="mr-2 h-4 w-4" />
                     Upload Images
                 </Button>

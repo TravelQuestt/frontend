@@ -17,7 +17,7 @@ const team = [
         name: "Sourav Jagtap",
         role: "Lead Architect",
         bio: "I don't know how it works but it just works.",
-        image: "./avatars/sourav.webp",
+        image: "./avatars/sourav.jpg",
         glowColor: "text-cyan-500",
     },
     {

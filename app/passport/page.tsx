@@ -159,7 +159,7 @@ export default function ExplorerPassportPage() {
                 <Card className="relative overflow-hidden border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl rounded-3xl">
                     <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/5 blur-[120px] -z-10" />
 
-                    <CardHeader className="border-b border-white/10 bg-background-muted py-6 px-8">
+                    <CardHeader className="border-b border-white/10 bg-background-muted pt-3 pb-6 px-8">
                         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                             <div className="flex items-center gap-4">
                                 <div className="p-3 bg-white/5 rounded-2xl border border-white/5 shadow-xl">
@@ -196,14 +196,14 @@ export default function ExplorerPassportPage() {
                                 <div className="flex justify-between items-start mb-8">
                                     <div className={`p-4 rounded-2xl border transition-all duration-500 ${m.achieved
                                         ? `bg-white/5 border-white/5 ${m.color} shadow-lg`
-                                        : "bg-white/5 border-transparent text-white/20"
+                                        : "bg-white/5 border-transparent text-white"
                                         }`}>
                                         <m.icon className="w-6 h-6" />
                                     </div>
 
                                     <div className="text-right uppercase tracking-tighter">
                                         <span className="text-[10px] font-bold text-muted-foreground">Progress</span>
-                                        <p className={`text-lg font-black leading-none ${m.achieved ? "text-emerald-400" : "text-white/40"}`}>
+                                        <p className={`text-lg font-black leading-none ${m.achieved ? "text-emerald-400" : "text-white"}`}>
                                             {Math.round(m.progress)}%
                                         </p>
                                     </div>
@@ -213,7 +213,7 @@ export default function ExplorerPassportPage() {
                                     <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider">
                                         Requirement: {m.requirement}
                                     </p>
-                                    <h3 className={`text-xl font-bold tracking-tighter ${m.achieved ? "text-white" : "text-white/40"}`}>
+                                    <h3 className={`text-xl font-bold tracking-tighter ${m.achieved ? "text-white" : "text-white"}`}>
                                         {m.title}
                                     </h3>
                                 </div>

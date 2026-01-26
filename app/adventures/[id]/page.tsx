@@ -50,7 +50,7 @@ export default function AdventureDetails() {
         >
             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4">
                 <div>
-                    <h1 className="text-4xl font-bold text-primary mb-1">✈️ {adventure.name}</h1>
+                    <h1 className="text-4xl font-bold mb-1">✈️ {adventure.name}</h1>
                     {adventure.updatedAt && (
                         <TimeAgo date={adventure.updatedAt} component={MutedText} />
                     )}

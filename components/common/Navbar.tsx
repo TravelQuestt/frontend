@@ -14,6 +14,7 @@ import {
     LogOut,
     Map,
     Menu,
+    PlaneTakeoff,
     X,
 } from "lucide-react";
 import Link from "next/link";
@@ -34,7 +35,8 @@ export default function Navbar() {
     const navLinks = [
         { href: "/feed", icon: <BookCopy className="w-4 h-4" />, label: "Feed" },
         { href: "/adventures", icon: <Compass className="w-4 h-4" />, label: "Adventures" },
-        { href: "/collections", icon: <Layers className="w-4 h-4" />, label: "Collections" },
+        { href: "/passport", icon: <PlaneTakeoff className="w-4 h-4" />, label: "Passport" },
+        { href: "/trips", icon: <Layers className="w-4 h-4" />, label: "Trips" },
         { href: "/map", icon: <Map className="w-4 h-4" />, label: "Map" },
         { href: "/calendar", icon: <Calendar className="w-4 h-4" />, label: "Calendar" },
         { href: "/aboutus", icon: <AtSign className="w-4 h-4" />, label: "About Us" }

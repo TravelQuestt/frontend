@@ -22,7 +22,9 @@ instance.interceptors.response.use(
   (response) => response,
   (error) => {
     const status = error?.response?.status;
-    if (status === 401) {
+    const url = error?.config?.url;
+
+    if (status === 401 && !url?.includes("/user/login")) {
       deleteCookie("auth_token")
       sessionStorage.setItem('toast_message', 'Session Expired! Please login again');
       sessionStorage.setItem('toast_type', 'error');

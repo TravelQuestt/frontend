@@ -21,6 +21,7 @@ export async function fetchAllTrips(
             searchTerm: params.searchTerm || undefined,
             sortBy: params.sortBy,
             order: params.order,
+            status: params.status
         },
     });
 

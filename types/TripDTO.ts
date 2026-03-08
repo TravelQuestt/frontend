@@ -1,11 +1,14 @@
-type TripStatus = "UPCOMING" | "ONGOING" | "COMPLETED";
+export type TripStatus = "PLANNED" | "ONGOING" | "COMPLETED";
 
 export interface TripDTO {
   id: string;
   title: string;
   description: string;
-  startDate: string;
-  endDate: string;
+  startDate: Date;
+  endDate: Date;
   status: TripStatus;
   coverImageUrl: string;
+  adventureCount: number;
+  createdAt: Date;
+  updatedAt: Date;
 }

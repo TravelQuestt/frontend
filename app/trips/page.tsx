@@ -3,31 +3,69 @@
 import { AnimatePresence, motion, Variants } from "framer-motion";
 import {
   ArrowUpRight,
+  CalendarDays,
   ChevronLeft,
   ChevronRight,
   Compass,
+  FileText,
   Globe,
+  Loader2,
   MapPin,
-  Plus
+  Plane,
+  Plus,
+  Sparkles,
+  Type,
 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { format } from "date-fns";
 
 import SidebarFilter, {
   SidebarFilters,
 } from "@/components/trips/SidebarFilter";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import useCreateTrip, {
+  CreateTripRequest,
+} from "@/hooks/trips/useCreateTrip";
 import useTrips from "@/hooks/trips/useTrips";
 import {
   formatDateRange,
   formatRelativeTime,
-  parseDate
+  parseDate,
 } from "@/lib/dateUtils";
-import { TripDTO, TripStatus } from "@/types/TripDTO";
+import { cn } from "@/lib/utils";
 import fallbackImage from "@/public/trip_placeholder_dark.jpg";
+import { TripDTO, TripStatus } from "@/types/TripDTO";
 import { StaticImageData } from "next/image";
 import Link from "next/link";
+
+/* ------------------------------------------------------------------ */
+/*  Types & constants                                                  */
+/* ------------------------------------------------------------------ */
 
 type TripTab = "ALL" | TripStatus;
 
@@ -54,10 +92,81 @@ const STATUS_COLOR: Record<TripStatus, string> = {
   PLANNED: "text-purple-500",
 };
 
+/* ------------------------------------------------------------------ */
+/*  Form types                                                         */
+/* ------------------------------------------------------------------ */
+
+interface TripFormData {
+  title: string;
+  description: string;
+  status: TripStatus | "";
+  startDate: Date | undefined;
+  endDate: Date | undefined;
+}
+
+interface TripFormErrors {
+  title?: string;
+  description?: string;
+  status?: string;
+  startDate?: string;
+  endDate?: string;
+}
+
+const EMPTY_FORM: TripFormData = {
+  title: "",
+  description: "",
+  status: "",
+  startDate: undefined,
+  endDate: undefined,
+};
+
+/* ------------------------------------------------------------------ */
+/*  Validation                                                         */
+/* ------------------------------------------------------------------ */
+
+function validateTripForm(data: TripFormData): TripFormErrors {
+  const errors: TripFormErrors = {};
+
+  if (!data.title.trim()) {
+    errors.title = "Trip title is required";
+  } else if (data.title.trim().length < 3) {
+    errors.title = "Title must be at least 3 characters";
+  } else if (data.title.trim().length > 100) {
+    errors.title = "Title cannot exceed 100 characters";
+  }
+
+  if (data.description.length > 1000) {
+    errors.description = "Description cannot exceed 1000 characters";
+  }
+
+  if (!data.status) {
+    errors.status = "Trip status is required";
+  }
+
+  if (!data.startDate) {
+    errors.startDate = "Start date is required";
+  }
+
+  if (!data.endDate) {
+    errors.endDate = "End date is required";
+  }
+
+  if (data.startDate && data.endDate && data.endDate < data.startDate) {
+    errors.endDate = "End date must be after the start date";
+  }
+
+  return errors;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Page                                                               */
+/* ------------------------------------------------------------------ */
+
 export default function TripsPage() {
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState<TripTab>("ALL");
   const [filters, setFilters] = useState<SidebarFilters>(DEFAULT_FILTERS);
+  const [createOpen, setCreateOpen] = useState(false);
 
   const handleTabChange = (value: string) => {
     const tab = value as TripTab;
@@ -132,7 +241,9 @@ export default function TripsPage() {
   const isFirstPage = filters.pageNumber === 0;
   const isLastPage = trips.length < filters.pageSize;
 
-  const completedCount = trips.filter((t) => t.status === "COMPLETED").length;
+  const completedCount = trips.filter(
+    (t) => t.status === "COMPLETED"
+  ).length;
   const ongoingCount = trips.filter((t) => t.status === "ONGOING").length;
   const plannedCount = trips.filter((t) => t.status === "PLANNED").length;
 
@@ -153,6 +264,7 @@ export default function TripsPage() {
         </aside>
 
         <main className="relative flex-1 min-w-0 px-6 xl:px-10 py-16 space-y-7">
+          {/* header */}
           <header className="flex flex-col md:flex-row justify-between items-end gap-8 border-b border-black/5 dark:border-white/5 pb-12">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -182,9 +294,7 @@ export default function TripsPage() {
                       : "No activity yet"}
                   </span>
                 </div>
-
                 <div className="w-px h-8 bg-black/5 dark:bg-white/5" />
-
                 <div className="flex flex-col">
                   <span className="text-[10px] font-black uppercase tracking-[0.2em] text-purple-500/70">
                     Next departure
@@ -215,11 +325,7 @@ export default function TripsPage() {
                   >
                     <StatItem label="Past" value={completedCount} />
                     <Divider />
-                    <StatItem
-                      label="Active"
-                      value={ongoingCount}
-                      highlight
-                    />
+                    <StatItem label="Active" value={ongoingCount} highlight />
                     <Divider />
                     <StatItem label="Planned" value={plannedCount} />
                   </motion.div>
@@ -247,19 +353,17 @@ export default function TripsPage() {
               </AnimatePresence>
             </motion.div>
           </header>
+
+          {/* toolbar */}
           <motion.div
             layout
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            transition={{
-              duration: 0.3,
-              delay: 0.05,
-            }}
+            transition={{ duration: 0.3, delay: 0.05 }}
             whileHover={{
               scale: 1.03,
-              boxShadow:
-                "0px 4px 20px rgba(0,0,0,0.08)",
+              boxShadow: "0px 4px 20px rgba(0,0,0,0.08)",
             }}
           >
             <nav
@@ -285,6 +389,7 @@ export default function TripsPage() {
                   size="icon"
                   aria-label="Create new trip"
                   title="Create new trip"
+                  onClick={() => setCreateOpen(true)}
                   className="h-12 w-12 rounded-full bg-sky-500 hover:bg-sky-600 text-white shadow-lg shadow-sky-500/20 transition-all hover:rotate-90"
                 >
                   <Plus size={24} />
@@ -292,6 +397,8 @@ export default function TripsPage() {
               </div>
             </nav>
           </motion.div>
+
+          {/* grid */}
           <AnimatePresence mode="wait">
             <motion.div
               key={activeTab + search + filters.pageNumber}
@@ -308,19 +415,14 @@ export default function TripsPage() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{
-                    duration: 0.3,
-                    delay: index * 0.05,
-                  }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
                   whileHover={{
                     scale: 1.03,
-                    boxShadow:
-                      "0px 4px 20px rgba(0,0,0,0.08)",
+                    boxShadow: "0px 4px 20px rgba(0,0,0,0.08)",
                   }}
                 >
-                  <BentoTripCard key={trip.id} trip={trip} />
+                  <BentoTripCard trip={trip} />
                 </motion.div>
-
               ))}
 
               {trips.length === 0 && !isLoading && (
@@ -342,6 +444,7 @@ export default function TripsPage() {
             </motion.div>
           </AnimatePresence>
 
+          {/* pagination */}
           {(trips.length > 0 || filters.pageNumber > 0) && (
             <motion.div
               initial={{ opacity: 0 }}
@@ -358,13 +461,11 @@ export default function TripsPage() {
                 <ChevronLeft size={16} />
                 Previous
               </Button>
-
               <div className="flex items-center justify-center h-10 min-w-24 rounded-full bg-black/5 dark:bg-white/5 px-4">
                 <span className="text-sm font-bold tabular-nums">
                   Page {filters.pageNumber + 1}
                 </span>
               </div>
-
               <Button
                 variant="outline"
                 size="sm"
@@ -379,9 +480,453 @@ export default function TripsPage() {
           )}
         </main>
       </div>
+
+      {/* Create Trip Dialog */}
+      <CreateTripDialog open={createOpen} onOpenChange={setCreateOpen} />
     </div>
   );
 }
+
+/* ================================================================== */
+/*  CreateTripDialog                                                   */
+/* ================================================================== */
+
+function CreateTripDialog({
+  open,
+  onOpenChange,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  const [form, setForm] = useState<TripFormData>({ ...EMPTY_FORM });
+  const [errors, setErrors] = useState<TripFormErrors>({});
+  const [touched, setTouched] = useState<Set<string>>(new Set());
+
+  const createTrip = useCreateTrip();
+
+  const reset = useCallback(() => {
+    setForm({ ...EMPTY_FORM });
+    setErrors({});
+    setTouched(new Set());
+    createTrip.reset();
+  }, [createTrip]);
+
+  const handleClose = useCallback(
+    (value: boolean) => {
+      if (!value) reset();
+      onOpenChange(value);
+    },
+    [onOpenChange, reset]
+  );
+
+  const updateField = <K extends keyof TripFormData>(
+    field: K,
+    value: TripFormData[K]
+  ) => {
+    setForm((prev) => {
+      const next = { ...prev, [field]: value };
+      if (touched.has(field)) {
+        setErrors(validateTripForm(next));
+      }
+      return next;
+    });
+  };
+
+  const markTouched = (field: string) => {
+    setTouched((prev) => {
+      const next = new Set(prev);
+      next.add(field);
+      return next;
+    });
+    setErrors(validateTripForm(form));
+  };
+
+  const handleSubmit = async () => {
+    setTouched(
+      new Set(["title", "description", "status", "startDate", "endDate"])
+    );
+
+    const validationErrors = validateTripForm(form);
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) return;
+
+    const payload: CreateTripRequest = {
+      title: form.title.trim(),
+      description: form.description.trim(),
+      status: form.status as TripStatus,
+      startDate: format(form.startDate!, "yyyy-MM-dd") + "T00:00:00",
+      endDate: format(form.endDate!, "yyyy-MM-dd") + "T23:59:59",
+    };
+
+    createTrip.mutate(payload, {
+      onSuccess: () => {
+        handleClose(false);
+      },
+    });
+  };
+
+  const fieldVariants: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    show: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: { delay: i * 0.06, duration: 0.35, ease: "easeOut" },
+    }),
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={handleClose}>
+      {/*
+        [&>button] targets the single built-in shadcn close button
+        and styles it white so it's visible on the gradient header.
+      */}
+      <DialogContent
+        className="max-w-lg p-0 gap-0 overflow-hidden rounded-3xl border-black/5
+                   dark:border-white/10 shadow-2xl
+                   [&>button]:text-white [&>button]:hover:text-white/80
+                   [&>button]:hover:bg-white/10 [&>button]:transition-colors
+                   [&>button]:top-5 [&>button]:right-5 [&>button]:rounded-full"
+      >
+        {/* ── gradient header ── */}
+        <div className="relative bg-gradient-to-br from-sky-500 via-sky-600 to-purple-600 px-8 pt-8 pb-12 text-white overflow-hidden">
+          <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full bg-white/10 blur-2xl" />
+          <div className="absolute -bottom-6 -left-6 w-24 h-24 rounded-full bg-purple-400/20 blur-xl" />
+
+          <DialogHeader className="relative z-10 space-y-2">
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex items-center gap-2 text-sky-200 text-xs font-black uppercase tracking-widest"
+            >
+              <Sparkles size={14} />
+              New Adventure
+            </motion.div>
+            <DialogTitle className="text-2xl font-black tracking-tight">
+              Create a Trip
+            </DialogTitle>
+            <DialogDescription className="text-white/60 text-sm">
+              Fill in the details below and start planning your next journey.
+            </DialogDescription>
+          </DialogHeader>
+        </div>
+
+        {/* ── form body ── */}
+        <motion.div
+          initial="hidden"
+          animate="show"
+          className="px-8 py-8 space-y-6 bg-white dark:bg-zinc-950"
+        >
+          {/* title */}
+          <motion.div variants={fieldVariants} custom={0} className="space-y-2">
+            <Label
+              htmlFor="trip-title"
+              className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-muted-foreground"
+            >
+              <Type size={12} />
+              Title
+            </Label>
+            <Input
+              id="trip-title"
+              placeholder="e.g. Summer in Italy"
+              maxLength={100}
+              value={form.title}
+              onChange={(e) => updateField("title", e.target.value)}
+              onBlur={() => markTouched("title")}
+              className={cn(
+                "h-12 rounded-xl border-black/10 dark:border-white/10 bg-zinc-50 dark:bg-zinc-900 focus-visible:ring-sky-500",
+                errors.title &&
+                  touched.has("title") &&
+                  "border-red-500 focus-visible:ring-red-500"
+              )}
+            />
+            <AnimatePresence>
+              {errors.title && touched.has("title") && (
+                <motion.p
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="text-xs text-red-500 font-semibold"
+                >
+                  {errors.title}
+                </motion.p>
+              )}
+            </AnimatePresence>
+            <p className="text-[10px] text-muted-foreground/50 text-right tabular-nums">
+              {form.title.length}/100
+            </p>
+          </motion.div>
+
+          {/* description */}
+          <motion.div variants={fieldVariants} custom={1} className="space-y-2">
+            <Label
+              htmlFor="trip-desc"
+              className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-muted-foreground"
+            >
+              <FileText size={12} />
+              Description
+              <span className="text-muted-foreground/40 normal-case tracking-normal font-medium">
+                (optional)
+              </span>
+            </Label>
+            <Textarea
+              id="trip-desc"
+              placeholder="What's this trip about?"
+              maxLength={1000}
+              rows={3}
+              value={form.description}
+              onChange={(e) => updateField("description", e.target.value)}
+              onBlur={() => markTouched("description")}
+              className={cn(
+                "rounded-xl border-black/10 dark:border-white/10 bg-zinc-50 dark:bg-zinc-900 resize-none focus-visible:ring-sky-500",
+                errors.description &&
+                  touched.has("description") &&
+                  "border-red-500 focus-visible:ring-red-500"
+              )}
+            />
+            <AnimatePresence>
+              {errors.description && touched.has("description") && (
+                <motion.p
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="text-xs text-red-500 font-semibold"
+                >
+                  {errors.description}
+                </motion.p>
+              )}
+            </AnimatePresence>
+            <p className="text-[10px] text-muted-foreground/50 text-right tabular-nums">
+              {form.description.length}/1000
+            </p>
+          </motion.div>
+
+          {/* status */}
+          <motion.div variants={fieldVariants} custom={2} className="space-y-2">
+            <Label className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-muted-foreground">
+              <Plane size={12} />
+              Status
+            </Label>
+            <Select
+              value={form.status}
+              onValueChange={(val) =>
+                updateField("status", val as TripStatus)
+              }
+            >
+              <SelectTrigger
+                onBlur={() => markTouched("status")}
+                className={cn(
+                  "h-12 rounded-xl border-black/10 dark:border-white/10 bg-zinc-50 dark:bg-zinc-900 focus:ring-sky-500",
+                  errors.status &&
+                    touched.has("status") &&
+                    "border-red-500 focus:ring-red-500"
+                )}
+              >
+                <SelectValue placeholder="Choose a status" />
+              </SelectTrigger>
+              <SelectContent className="rounded-xl">
+                <SelectItem value="PLANNED">
+                  <span className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-purple-500" />
+                    Planned
+                  </span>
+                </SelectItem>
+                <SelectItem value="ONGOING">
+                  <span className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-sky-500" />
+                    Ongoing
+                  </span>
+                </SelectItem>
+                <SelectItem value="COMPLETED">
+                  <span className="flex items-center gap-2">
+                    <span className="h-2 w-2 rounded-full bg-zinc-400" />
+                    Completed
+                  </span>
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            <AnimatePresence>
+              {errors.status && touched.has("status") && (
+                <motion.p
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="text-xs text-red-500 font-semibold"
+                >
+                  {errors.status}
+                </motion.p>
+              )}
+            </AnimatePresence>
+          </motion.div>
+
+          {/* ── dates: shadcn Calendar + Popover ── */}
+          <motion.div
+            variants={fieldVariants}
+            custom={3}
+            className="grid grid-cols-2 gap-4"
+          >
+            {/* start date */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-muted-foreground">
+                <CalendarDays size={12} />
+                Start
+              </Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    onBlur={() => markTouched("startDate")}
+                    className={cn(
+                      "w-full h-12 rounded-xl justify-start text-left font-normal border-black/10 dark:border-white/10 bg-zinc-50 dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800",
+                      !form.startDate && "text-muted-foreground",
+                      errors.startDate &&
+                        touched.has("startDate") &&
+                        "border-red-500"
+                    )}
+                  >
+                    <CalendarDays className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+                    {form.startDate
+                      ? format(form.startDate, "PPP")
+                      : "Pick a date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 rounded-xl" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={form.startDate}
+                    onSelect={(date) => {
+                      updateField("startDate", date);
+                      markTouched("startDate");
+                    }}
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+              <AnimatePresence>
+                {errors.startDate && touched.has("startDate") && (
+                  <motion.p
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="text-xs text-red-500 font-semibold"
+                  >
+                    {errors.startDate}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* end date */}
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-muted-foreground">
+                <CalendarDays size={12} />
+                End
+              </Label>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    onBlur={() => markTouched("endDate")}
+                    className={cn(
+                      "w-full h-12 rounded-xl justify-start text-left font-normal border-black/10 dark:border-white/10 bg-zinc-50 dark:bg-zinc-900 hover:bg-zinc-100 dark:hover:bg-zinc-800",
+                      !form.endDate && "text-muted-foreground",
+                      errors.endDate &&
+                        touched.has("endDate") &&
+                        "border-red-500"
+                    )}
+                  >
+                    <CalendarDays className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+                    {form.endDate
+                      ? format(form.endDate, "PPP")
+                      : "Pick a date"}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 rounded-xl" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={form.endDate}
+                    onSelect={(date) => {
+                      updateField("endDate", date);
+                      markTouched("endDate");
+                    }}
+                    disabled={(date) =>
+                      form.startDate ? date < form.startDate : false
+                    }
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+              <AnimatePresence>
+                {errors.endDate && touched.has("endDate") && (
+                  <motion.p
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="text-xs text-red-500 font-semibold"
+                  >
+                    {errors.endDate}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </div>
+          </motion.div>
+
+          {/* server error */}
+          <AnimatePresence>
+            {createTrip.isError && (
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 8 }}
+                className="rounded-xl bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800 p-4 text-sm text-red-600 dark:text-red-400 font-semibold"
+              >
+                {(createTrip.error as Error)?.message ??
+                  "Something went wrong. Please try again."}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* actions */}
+          <motion.div
+            variants={fieldVariants}
+            custom={4}
+            className="flex justify-end gap-3 pt-2"
+          >
+            <Button
+              variant="ghost"
+              onClick={() => handleClose(false)}
+              disabled={createTrip.isPending}
+              className="rounded-full h-12 px-6 text-sm font-bold"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleSubmit}
+              disabled={createTrip.isPending}
+              className="rounded-full h-12 px-8 bg-gradient-to-r from-sky-500 to-purple-600 hover:from-sky-600 hover:to-purple-700 text-white font-black text-sm shadow-lg shadow-sky-500/20 transition-all gap-2"
+            >
+              {createTrip.isPending ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" />
+                  Creating…
+                </>
+              ) : (
+                <>
+                  <Plus size={16} />
+                  Create Trip
+                </>
+              )}
+            </Button>
+          </motion.div>
+        </motion.div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+/* ================================================================== */
+/*  Shared tiny components                                             */
+/* ================================================================== */
 
 function Divider() {
   return (
@@ -406,14 +951,19 @@ function StatItem({
         {label}
       </p>
       <p
-        className={`text-2xl font-black ${colorClass ?? (highlight ? "text-sky-500" : "")
-          }`}
+        className={`text-2xl font-black ${
+          colorClass ?? (highlight ? "text-sky-500" : "")
+        }`}
       >
         {value}
       </p>
     </div>
   );
 }
+
+/* ================================================================== */
+/*  Grid / Card                                                        */
+/* ================================================================== */
 
 const gridVariants: Variants = {
   hidden: {},
@@ -439,6 +989,7 @@ function BentoTripCard({ trip }: { trip: TripDTO }) {
       transition: { duration: 0.4, ease: "easeOut" },
     },
   };
+
   const coverImageUrl =
     trip.coverImageUrl?.length > 0
       ? trip.coverImageUrl
@@ -447,6 +998,7 @@ function BentoTripCard({ trip }: { trip: TripDTO }) {
   function resolveImageSrc(src: string | StaticImageData): string {
     return typeof src === "string" ? src : src.src;
   }
+
   return (
     <motion.div
       initial="rest"
@@ -466,18 +1018,15 @@ function BentoTripCard({ trip }: { trip: TripDTO }) {
           variants={{ rest: { scale: 1 }, hover: { scale: 1.08 } }}
           transition={{ duration: 1.2, ease: "easeOut" }}
         />
-
         <div className="absolute inset-0 bg-linear-to-b from-black/10 via-transparent to-black/90" />
 
         <div className="absolute inset-0 p-7 flex flex-col justify-between text-white z-10">
-          {/* top row */}
           <div className="flex justify-between items-start">
             <motion.div variants={infoVariants}>
               <Badge className="bg-white/10 backdrop-blur-xl border-white/20 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">
                 {trip.status}
               </Badge>
             </motion.div>
-
             <motion.div
               variants={infoVariants}
               className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest opacity-60"
@@ -487,7 +1036,6 @@ function BentoTripCard({ trip }: { trip: TripDTO }) {
             </motion.div>
           </div>
 
-          {/* bottom */}
           <div className="space-y-3">
             <h3 className="text-3xl xl:text-4xl font-black leading-[0.95] tracking-tighter">
               {trip.title.split(" ").map((word, i) => (
